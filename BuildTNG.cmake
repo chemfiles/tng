@@ -1,9 +1,9 @@
 set(TNG_ROOT_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
-file(RELATIVE_PATH TNG_ROOT_BINARY_DIR ${CMAKE_SOURCE_DIR} ${TNG_ROOT_SOURCE_DIR})
-if ("${TNG_ROOT_BINARY_DIR}" MATCHES "^\.\.")
-    set(TNG_ROOT_BINARY_DIR tng)
-endif()
-set(TNG_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR}/${TNG_ROOT_BINARY_DIR})
+# file(RELATIVE_PATH TNG_ROOT_BINARY_DIR ${CMAKE_SOURCE_DIR} ${TNG_ROOT_SOURCE_DIR})
+# if ("${TNG_ROOT_BINARY_DIR}" MATCHES "^\.\.")
+#     set(TNG_ROOT_BINARY_DIR tng)
+# endif()
+set(TNG_ROOT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(TNG_MAJOR_VERSION "1")
 set(TNG_MINOR_VERSION "8")
@@ -52,15 +52,15 @@ function(add_tng_io_library NAME)
     if (ARG_OBJECT)
         set(_build_target tng_io_obj)
         set(_link_type INTERFACE)
-        add_library(${_build_target} OBJECT ${_sources})
+        add_library(${NAME} OBJECT ${_sources})
         # PIC is only on by default for SHARED libraries, but in case the
         # object library is going to get used in such a library, the objects
         # should be compiled with PIC as well.
         if (BUILD_SHARED_LIBS)
-            set_target_properties(${_build_target} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+            set_target_properties(${NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
         endif()
-        add_library(${NAME} INTERFACE)
-        target_sources(${NAME} INTERFACE $<TARGET_OBJECTS:tng_io_obj>)
+        # add_library(${NAME} INTERFACE)
+        # target_sources(${NAME} INTERFACE $<TARGET_OBJECTS:tng_io_obj>)
     else()
         add_library(${NAME} ${_sources})
         set_target_properties(${NAME} PROPERTIES
@@ -68,16 +68,16 @@ function(add_tng_io_library NAME)
                               SOVERSION ${TNG_MAJOR_VERSION})
         target_include_directories(${NAME} INTERFACE $<INSTALL_INTERFACE:include>)
     endif()
-    target_include_directories(${_build_target} PRIVATE
+    target_include_directories(${NAME} PRIVATE
                                $<BUILD_INTERFACE:${TNG_ROOT_SOURCE_DIR}/include>
                                $<BUILD_INTERFACE:${TNG_ROOT_BINARY_DIR}/include>)
-    target_include_directories(${NAME} INTERFACE
-                               $<BUILD_INTERFACE:${TNG_ROOT_SOURCE_DIR}/include>
-                               $<BUILD_INTERFACE:${TNG_ROOT_BINARY_DIR}/include>)
-
-    if (UNIX)
-        target_link_libraries(${NAME} ${_link_type} m)
-    endif()
+    # target_include_directories(${NAME} INTERFACE
+    #                            $<BUILD_INTERFACE:${TNG_ROOT_SOURCE_DIR}/include>
+    #                            $<BUILD_INTERFACE:${TNG_ROOT_BINARY_DIR}/include>)
+    #
+    # if (UNIX)
+    #     target_link_libraries(${NAME} ${_link_type} m)
+    # endif()
 
     if (ARG_OWN_ZLIB)
         set(_zlib_dir ${TNG_ROOT_SOURCE_DIR}/external/zlib)
@@ -91,8 +91,8 @@ function(add_tng_io_library NAME)
             set_target_properties(tng_io_zlib PROPERTIES POSITION_INDEPENDENT_CODE ON)
         endif()
         target_include_directories(tng_io_zlib PUBLIC ${_zlib_dir})
-        target_include_directories(${_build_target} PRIVATE ${_zlib_dir})
-        target_sources(${NAME} ${_link_type} $<TARGET_OBJECTS:tng_io_zlib>)
+        target_include_directories(${NAME} PRIVATE ${_zlib_dir})
+        # target_sources(${NAME} ${_link_type} $<TARGET_OBJECTS:tng_io_zlib>)
     else()
         target_link_libraries(${NAME} ${_link_type} ZLIB::ZLIB)
     endif()
