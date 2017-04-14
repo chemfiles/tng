@@ -12,15 +12,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-option(BUILD_SHARED_LIBS "Enable shared libraries" ON)
-
 option(TNG_BUILD_FORTRAN "Build Fortran compatible library and examples for testing" OFF)
 
-option(TNG_BUILD_EXAMPLES "Build examples showing usage of the TNG API" ON)
-option(TNG_BUILD_TEST "Build TNG testing binary." ON)
+option(TNG_BUILD_EXAMPLES "Build examples showing usage of the TNG API" OFF)
+option(TNG_BUILD_TEST "Build TNG testing binary." OFF)
 option(TNG_BUILD_COMPRESSION_TESTS "Build tests of the TNG compression library" OFF)
 
-option(TNG_BUILD_OWN_ZLIB "Build and use the internal zlib library" OFF)
+option(TNG_BUILD_OWN_ZLIB "Build and use the internal zlib library" ON)
 if(NOT TNG_BUILD_OWN_ZLIB)
   find_package(ZLIB QUIET)
 endif()
