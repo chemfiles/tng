@@ -27,11 +27,12 @@ include(CheckIncludeFile)
 check_include_file(inttypes.h   HAVE_INTTYPES_H)
 
 include(BuildTNG.cmake)
-if (ZLIB_FOUND AND NOT TNG_BUILD_OWN_ZLIB)
-  add_tng_io_library(tng_io)
-else()
-  add_tng_io_library(tng_io OWN_ZLIB)
-endif()
+add_tng_io_library(tng_io OBJECT OWN_ZLIB)
+# if (ZLIB_FOUND AND NOT TNG_BUILD_OWN_ZLIB)
+#   add_tng_io_library(tng_io)
+# else()
+#   add_tng_io_library(tng_io OWN_ZLIB)
+# endif()
 
 # Use GNUInstallDirs to set paths on multiarch systems
 include(GNUInstallDirs)
