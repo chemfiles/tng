@@ -2,7 +2,16 @@ cmake_minimum_required(VERSION 2.8.11)
 
 project(TNG_IO C)
 
-if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+if (POLICY CMP0054)
+    # Only interpret ``if()`` arguments as variables or keywords when unquoted.
+    cmake_policy(SET CMP0054 NEW)
+endif()
+if (POLICY CMP0063)
+    # Use of `<LANG>_VISIBILITY_PRESET` in OBJECT libraries
+    cmake_policy(SET CMP0063 NEW)
+endif()
+
+if(${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
 elseif(WIN32)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /W2")
