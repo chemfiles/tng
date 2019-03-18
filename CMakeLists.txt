@@ -27,7 +27,7 @@ option(TNG_BUILD_EXAMPLES "Build examples showing usage of the TNG API" OFF)
 option(TNG_BUILD_TEST "Build TNG testing binary." OFF)
 option(TNG_BUILD_COMPRESSION_TESTS "Build tests of the TNG compression library" OFF)
 
-option(TNG_BUILD_OWN_ZLIB "Build and use the internal zlib library" ON)
+option(TNG_BUILD_OWN_ZLIB "Build and use the internal zlib library" OFF)
 if(NOT TNG_BUILD_OWN_ZLIB)
   find_package(ZLIB QUIET)
 endif()
