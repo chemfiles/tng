@@ -17633,6 +17633,7 @@ tng_function_status DECLSPECDLLEXPORT tng_util_trajectory_next_frame_present_dat
 
             min_diff = frame_diff;
         }
+        data->last_retrieved_frame = current_frame;
     }
     for(i = 0; i < frame_set->n_data_blocks; i++)
     {
@@ -17719,6 +17720,7 @@ tng_function_status DECLSPECDLLEXPORT tng_util_trajectory_next_frame_present_dat
 
             min_diff = frame_diff;
         }
+        data->last_retrieved_frame = current_frame;
     }
     if(min_diff < 0)
     {
