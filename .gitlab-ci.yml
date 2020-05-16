@@ -1,0 +1,25 @@
+# Declare and sequence the stages to which jobs may be assigned.
+# The pipeline is organized into stages so that if early stages fail
+# the later ones are not run.
+stages:
+  # Code linting stage
+  - lint
+  # Configure stage.
+  - configure
+  # Build TNG in multiple configurations
+  - build
+  # Unit test each configuration, perhaps in multiple ways
+  - test
+  # Generate documentation files
+  - documentation
+
+include:
+  # Mix-in helper job definitions of general utility.
+  - local: '/gitlab-ci/global.gitlab-ci.yml'
+  # Build and test TNG in a variety of environments and configurations.
+  - local: '/gitlab-ci/tng.gitlab-ci.yml'
+  # Repository cleanliness. Source tidiness, linting, and policy compliance.
+  # Include once it is possible to use this.
+  # - local: '/gitlab-ci/lint.gitlab-ci.yml'
+  # Web page and manual.
+  - local: '/gitlab-ci/documentation.gitlab-ci.yml'
