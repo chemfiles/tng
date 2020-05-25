@@ -14145,7 +14145,7 @@ static tng_function_status tng_gen_data_get
         }
     }
 
-    data->last_retrieved_frame = frame_set->first_frame + data->n_frames - 1;
+    data->last_retrieved_frame = data->first_frame_with_data + data->n_frames - 1;
 
     return(TNG_SUCCESS);
 }
@@ -14335,7 +14335,7 @@ static tng_function_status tng_gen_data_vector_get
         }
     }
 
-    data->last_retrieved_frame = frame_set->first_frame + data->n_frames - 1;
+    data->last_retrieved_frame = data->first_frame_with_data + data->n_frames - 1;
 
     return(TNG_SUCCESS);
 }
@@ -14728,14 +14728,26 @@ static tng_function_status tng_gen_data_vector_interval_get
     frame_set = &tng_data->current_trajectory_frame_set;
     first_frame = frame_set->first_frame;
 
-    stat = tng_frame_set_of_frame_find(tng_data, start_frame_nr);
+    /* Do not re-read the frame set if not necessary. */
+    if(tng_data->current_trajectory_frame_set_input_file_pos < 0 ||
+       start_frame_nr < first_frame ||
+       start_frame_nr >= first_frame + frame_set->n_frames)
+    {
+        stat = tng_frame_set_of_frame_find(tng_data, start_frame_nr);
+        if(stat != TNG_SUCCESS)
+        {
+            return(stat);
+        }
+    }
+
+    /* Re-read the relevant data block. */
+    stat = tng_frame_set_read_current_only_data_from_block_id(tng_data, TNG_USE_HASH, block_id);
     if(stat != TNG_SUCCESS)
     {
         return(stat);
     }
 
-    /* Do not re-read the frame set and only need the requested block + particle mapping blocks. */
-    /* TODO: Test that blocks are read correctly now that now all of them are read at the same time. */
+    /* TODO: Test that blocks are read correctly. */
     if(is_particle_data == TNG_TRUE)
     {
         stat = tng_particle_data_find(tng_data, block_id, &data);
@@ -14904,7 +14916,7 @@ static tng_function_status tng_gen_data_vector_interval_get
         n_frames_div_2 = (last_frame_pos % *stride_length) ?
                        last_frame_pos / *stride_length + 1:
                        last_frame_pos / *stride_length;
-        n_frames_div_2 = tng_max_i64(1, n_frames_div_2 + 1);
+        n_frames_div_2 = tng_max_i64(1, n_frames_div_2);
 
         memcpy(*values, (char *)current_values + n_frames_div * frame_size,
                n_frames_div_2 * frame_size);
@@ -14954,13 +14966,27 @@ static tng_function_status tng_gen_data_vector_interval_get
                    current_values,
                    n_frames_div_2 * frame_size);
 
-            current_frame_pos += n_frames;
+            current_frame_pos += n_frames * *stride_length;
         }
     }
 
     if(current_values)
     {
         free(current_values);
+    }
+
+    /* *data may have been reinitialized/freed when reading frame sets. Re-find the correct data block. */
+    if(is_particle_data == TNG_TRUE)
+    {
+        stat = tng_particle_data_find(tng_data, block_id, &data);
+    }
+    else
+    {
+        stat = tng_data_find(tng_data, block_id, &data);
+    }
+    if(stat != TNG_SUCCESS)
+    {
+        return(stat);
     }
 
     data->last_retrieved_frame = end_frame_nr;
