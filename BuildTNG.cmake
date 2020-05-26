@@ -106,4 +106,10 @@ function(add_tng_io_library NAME)
         set_property(SOURCE ${TNG_ROOT_SOURCE_DIR}/src/lib/md5.c
                      APPEND PROPERTY COMPILE_DEFINITIONS TNG_INTEGER_BIG_ENDIAN)
     endif()
+
+    if (TNG_CLANG_TIDY)
+        set_target_properties(${NAME} PROPERTIES C_CLANG_TIDY
+       "${CLANG_TIDY_EXE};-warnings-as-errors=*;-header-filter=.*")
+    endif()
+
 endfunction()

@@ -14,13 +14,13 @@
 
 #include "../compression/tng_compress.h"
 
-void DECLSPECDLLEXPORT *Ptngc_warnmalloc_x(const size_t size, char *file, const int line);
+void DECLSPECDLLEXPORT* Ptngc_warnmalloc_x(size_t size, char* file, int line);
 
-#define warnmalloc(size) Ptngc_warnmalloc_x(size,__FILE__,__LINE__)
+#define warnmalloc(size) Ptngc_warnmalloc_x(size, __FILE__, __LINE__)
 
-void DECLSPECDLLEXPORT *Ptngc_warnrealloc_x(void *old, const size_t size, char *file, const int line);
+void DECLSPECDLLEXPORT* Ptngc_warnrealloc_x(void* old, size_t size, char* file, int line);
 
-#define warnrealloc(old,size) Ptngc_warnrealloc_x(old,size,__FILE__,__LINE__)
+#define warnrealloc(old, size) Ptngc_warnrealloc_x(old, size, __FILE__, __LINE__)
 
 
 #endif

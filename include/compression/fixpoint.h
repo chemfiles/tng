@@ -17,20 +17,20 @@
 typedef unsigned long fix_t;
 
 /* Positive double to 32 bit fixed point value */
-fix_t Ptngc_ud_to_fix_t(double d, const double max);
+fix_t Ptngc_ud_to_fix_t(double d, double max);
 
 /* double to signed 32 bit fixed point value */
-fix_t Ptngc_d_to_fix_t(double d, const double max);
+fix_t Ptngc_d_to_fix_t(double d, double max);
 
 /* 32 bit fixed point value to positive double */
-double Ptngc_fix_t_to_ud(fix_t f, const double max);
+double Ptngc_fix_t_to_ud(fix_t f, double max);
 
 /* signed 32 bit fixed point value to double */
-double Ptngc_fix_t_to_d(fix_t f, const double max);
+double Ptngc_fix_t_to_d(fix_t f, double max);
 
 /* Convert a floating point variable to two 32 bit integers with range
    -2.1e9 to 2.1e9 and precision to somewhere around 1e-9. */
-void Ptngc_d_to_i32x2(double d, fix_t *hi, fix_t *lo);
+void Ptngc_d_to_i32x2(double d, fix_t* hi, fix_t* lo);
 
 /* Convert two 32 bit integers to a floating point variable
    -2.1e9 to 2.1e9 and precision to somewhere around 1e-9. */

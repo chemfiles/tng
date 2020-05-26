@@ -1,0 +1,5 @@
+# Generic rules
+*.c     filter=complete_formatting
+*.cpp   filter=complete_formatting
+*.h     filter=complete_formatting
+*.hpp   filter=complete_formatting

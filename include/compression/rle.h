@@ -12,11 +12,8 @@
 #ifndef RLE_H
 #define RLE_H
 
-void Ptngc_comp_conv_to_rle(unsigned int *vals, const int nvals,
-		                    unsigned int *rle, int *nrle,
-		                    const int min_rle);
+void Ptngc_comp_conv_to_rle(const unsigned int* vals, int nvals, unsigned int* rle, int* nrle, int min_rle);
 
-void Ptngc_comp_conv_from_rle(unsigned int *rle,
-			                  unsigned int *vals, const int nvals);
+void Ptngc_comp_conv_from_rle(const unsigned int* rle, unsigned int* vals, int nvals);
 
 #endif

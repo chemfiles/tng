@@ -15,114 +15,114 @@
 #include "../../include/compression/warnmalloc.h"
 #include "../../include/compression/merge_sort.h"
 
-static void ms_inner(void *base, const size_t size,
-             const size_t start, const size_t end,
-             int (*compar)(const void *v1,const void *v2,const void *private),
-             const void *private,
-             char *workarray)
+static void ms_inner(void*        base,
+                     const size_t size,
+                     const size_t start,
+                     const size_t end,
+                     int (*compar)(const void* v1, const void* v2, const void* private),
+                     const void* private,
+                     char* workarray)
 {
-  size_t middle;
-  if ((end-start)>1)
+    size_t middle;
+    if ((end - start) > 1)
     {
-      char *cbase=(char *)base;
-      middle=start+(end-start)/2;
+        char* cbase = (char*)base;
+        middle      = start + (end - start) / 2;
 #if 0
       printf("For start %d end %d obtained new middle: %d\n",start,end,middle);
 #endif
-      ms_inner(base,size,
-           start,middle,
-           compar,private,workarray);
-      ms_inner(base,size,
-           middle,end,
-           compar,private,workarray);
+        ms_inner(base, size, start, middle, compar, private, workarray);
+        ms_inner(base, size, middle, end, compar, private, workarray);
 #if 0
       printf("For start %d end %d Before merge: Comparing element %d with %d\n",start,end,middle-1,middle);
 #endif
-      if (compar(cbase+(middle-1)*size,cbase+middle*size,private)>0)
+        if (compar(cbase + (middle - 1) * size, cbase + middle * size, private) > 0)
         {
-          /* Merge to work array. */
-          size_t i, n=end-start;
-          size_t ileft=start;
-          size_t iright=middle;
-          for (i=0; i<n; i++)
+            /* Merge to work array. */
+            size_t i, n = end - start;
+            size_t ileft  = start;
+            size_t iright = middle;
+            for (i = 0; i < n; i++)
             {
-              if (ileft==middle)
+                if (ileft == middle)
                 {
-                  memcpy(workarray+i*size,cbase+iright*size,size);
-                  iright++;
+                    memcpy(workarray + i * size, cbase + iright * size, size);
+                    iright++;
                 }
-              else if (iright==end)
+                else if (iright == end)
                 {
-                  memcpy(workarray+i*size,cbase+ileft*size,size);
-                  ileft++;
+                    memcpy(workarray + i * size, cbase + ileft * size, size);
+                    ileft++;
                 }
-              else
+                else
                 {
-        #if 0
+#if 0
                   printf("For start %d end %d In merge: Comparing element %d with %d\n",start,end,ileft,iright);
-        #endif
-                  if (compar(cbase+ileft*size,cbase+iright*size,private)>0)
+#endif
+                    if (compar(cbase + ileft * size, cbase + iright * size, private) > 0)
                     {
-                      memcpy(workarray+i*size,cbase+iright*size,size);
-                      iright++;
+                        memcpy(workarray + i * size, cbase + iright * size, size);
+                        iright++;
                     }
-                  else
+                    else
                     {
-                      memcpy(workarray+i*size,cbase+ileft*size,size);
-                      ileft++;
+                        memcpy(workarray + i * size, cbase + ileft * size, size);
+                        ileft++;
                     }
                 }
             }
-          /* Copy result back. */
-          memcpy(cbase+start*size,workarray,(end-start)*size);
+            /* Copy result back. */
+            memcpy(cbase + start * size, workarray, (end - start) * size);
         }
     }
 }
 
 
-void Ptngc_merge_sort(void *base, const size_t nmemb, const size_t size,
-        int (*compar)(const void *v1,const void *v2,const void *private),
-        void *private)
+void Ptngc_merge_sort(void*        base,
+                      const size_t nmemb,
+                      const size_t size,
+                      int (*compar)(const void* v1, const void* v2, const void* private),
+                      void* private)
 {
-  char *warr=warnmalloc(nmemb*size);
-  ms_inner(base,size,0,nmemb,compar,private,warr);
-  free(warr);
+    char* warr = warnmalloc(nmemb * size);
+    ms_inner(base, size, 0, nmemb, compar, private, warr);
+    free(warr);
 }
 
 
 #ifdef TEST
 
-static int compint(const void *v1, const void *v2,const void *private)
+static int compint(const void* v1, const void* v2, const void* private)
 {
-  const int *i1=(const int *)v1;
-  const int *i2=(const int *)v2;
-  if (*i1<*i2)
-    return -1;
-  else if (*i1>*i2)
-    return 1;
-  else
-    return 0;
+    const int* i1 = (const int*)v1;
+    const int* i2 = (const int*)v2;
+    if (*i1 < *i2)
+        return -1;
+    else if (*i1 > *i2)
+        return 1;
+    else
+        return 0;
 }
 
-static int qcompint(const void *v1, const void *v2)
+static int qcompint(const void* v1, const void* v2)
 {
-  return compint(v1,v2,NULL);
+    return compint(v1, v2, NULL);
 }
 
-#define N 1000000
+#    define N 1000000
 int main()
 {
-  int *arr=warnmalloc(N*sizeof *arr);
-  int i;
-  for (i=0; i<N; i++)
-    scanf("%d",arr+i);
-#if 1
-  merge_sort(arr,N,sizeof *arr,compint,NULL);
-#else
-  qsort(arr,N,sizeof *arr,qcompint);
-#endif
-  for (i=0; i<N; i++)
-    printf("%d %d\n",i,arr[i]);
-  return 0;
+    int* arr = warnmalloc(N * sizeof *arr);
+    int  i;
+    for (i = 0; i < N; i++)
+        scanf("%d", arr + i);
+#    if 1
+    merge_sort(arr, N, sizeof *arr, compint, NULL);
+#    else
+    qsort(arr, N, sizeof *arr, qcompint);
+#    endif
+    for (i = 0; i < N; i++)
+        printf("%d %d\n", i, arr[i]);
+    return 0;
 }
 #endif

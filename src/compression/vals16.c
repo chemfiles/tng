@@ -13,28 +13,31 @@
 
 /* Coding 32 bit ints in sequences of 16 bit ints. Worst case
    the output is 3*nvals long. */
-void Ptngc_comp_conv_to_vals16(unsigned int *vals, const int nvals,
-                               unsigned int *vals16, int *nvals16)
+void Ptngc_comp_conv_to_vals16(const unsigned int* vals, const int nvals, unsigned int* vals16, int* nvals16)
 {
-  int i;
-  int j=0;
-  for (i=0; i<nvals; i++)
+    int i;
+    int j = 0;
+    for (i = 0; i < nvals; i++)
     {
-      if (vals[i]<=0x7FFFU)
-        vals16[j++]=vals[i];
-      else
+        if (vals[i] <= 0x7FFFU)
         {
-          unsigned int lo=(vals[i]&0x7FFFU)|0x8000U;
-          unsigned int hi=vals[i]>>15;
-          vals16[j++]=lo;
-          if (hi<=0x7FFFU)
-            vals16[j++]=hi;
-          else
+            vals16[j++] = vals[i];
+        }
+        else
+        {
+            unsigned int lo = (vals[i] & 0x7FFFU) | 0x8000U;
+            unsigned int hi = vals[i] >> 15;
+            vals16[j++]     = lo;
+            if (hi <= 0x7FFFU)
             {
-              unsigned int lohi=(hi&0x7FFFU)|0x8000U;
-              unsigned int hihi=hi>>15;
-              vals16[j++]=lohi;
-              vals16[j++]=hihi;
+                vals16[j++] = hi;
+            }
+            else
+            {
+                unsigned int lohi = (hi & 0x7FFFU) | 0x8000U;
+                unsigned int hihi = hi >> 15;
+                vals16[j++]       = lohi;
+                vals16[j++]       = hihi;
             }
         }
     }
@@ -42,30 +45,33 @@ void Ptngc_comp_conv_to_vals16(unsigned int *vals, const int nvals,
   /* Test that things that detect that this is bad really works. */
   vals16[0]=0;
 #endif
-  *nvals16=j;
+    *nvals16 = j;
 }
 
-void Ptngc_comp_conv_from_vals16(unsigned int *vals16, const int nvals16,
-                                 unsigned int *vals, int *nvals)
+void Ptngc_comp_conv_from_vals16(const unsigned int* vals16, const int nvals16, unsigned int* vals, int* nvals)
 {
-  int i=0;
-  int j=0;
-  while (i<nvals16)
+    int i = 0;
+    int j = 0;
+    while (i < nvals16)
     {
-      if (vals16[i]<=0x7FFFU)
-        vals[j++]=vals16[i++];
-      else
+        if (vals16[i] <= 0x7FFFU)
         {
-          unsigned int lo=vals16[i++];
-          unsigned int hi=vals16[i++];
-          if (hi<=0x7FFFU)
-            vals[j++]=(lo&0x7FFFU)|(hi<<15);
-          else
+            vals[j++] = vals16[i++];
+        }
+        else
+        {
+            unsigned int lo = vals16[i++];
+            unsigned int hi = vals16[i++];
+            if (hi <= 0x7FFFU)
             {
-              unsigned int hihi=vals16[i++];
-              vals[j++]=(lo&0x7FFFU)|((hi&0x7FFFU)<<15)|(hihi<<30);
+                vals[j++] = (lo & 0x7FFFU) | (hi << 15);
+            }
+            else
+            {
+                unsigned int hihi = vals16[i++];
+                vals[j++]         = (lo & 0x7FFFU) | ((hi & 0x7FFFU) << 15) | (hihi << 30);
             }
         }
     }
-  *nvals=j;
+    *nvals = j;
 }

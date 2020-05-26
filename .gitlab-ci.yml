@@ -2,14 +2,14 @@
 # The pipeline is organized into stages so that if early stages fail
 # the later ones are not run.
 stages:
-  # Code linting stage
-  - lint
   # Configure stage.
   - configure
   # Build TNG in multiple configurations
   - build
   # Unit test each configuration, perhaps in multiple ways
   - test
+  # Code linting stage
+  - lint
   # Generate documentation files
   - documentation
 
@@ -20,6 +20,6 @@ include:
   - local: '/gitlab-ci/tng.gitlab-ci.yml'
   # Repository cleanliness. Source tidiness, linting, and policy compliance.
   # Include once it is possible to use this.
-  # - local: '/gitlab-ci/lint.gitlab-ci.yml'
+  - local: '/gitlab-ci/lint.gitlab-ci.yml'
   # Web page and manual.
   - local: '/gitlab-ci/documentation.gitlab-ci.yml'

@@ -12,22 +12,25 @@
 #ifndef HUFFMAN_H
 #define HUFFMAN_H
 
-void Ptngc_comp_conv_to_huffman(unsigned int *vals, const int nvals,
-			  unsigned int *dict, const int ndict,
-			  unsigned int *prob,
-			  unsigned char *huffman,
-			  int *huffman_len,
-			  unsigned char *huffman_dict,
-			  int *huffman_dictlen,
-			  unsigned int *huffman_dict_unpacked,
-			  int *huffman_dict_unpackedlen);
+void Ptngc_comp_conv_to_huffman(const unsigned int* vals,
+                                int                 nvals,
+                                const unsigned int* dict,
+                                int                 ndict,
+                                unsigned int*       prob,
+                                unsigned char*      huffman,
+                                int*                huffman_len,
+                                unsigned char*      huffman_dict,
+                                int*                huffman_dictlen,
+                                unsigned int*       huffman_dict_unpacked,
+                                int*                huffman_dict_unpackedlen);
 
-void Ptngc_comp_conv_from_huffman(unsigned char *huffman,
-			    unsigned int *vals, const int nvals,
-			    const int ndict,
-			    unsigned char *huffman_dict,
-			    const int huffman_dictlen,
-			    unsigned int *huffman_dict_unpacked,
-			    const int huffman_dict_unpackedlen);
+void Ptngc_comp_conv_from_huffman(unsigned char*      huffman,
+                                  unsigned int*       vals,
+                                  int                 nvals,
+                                  int                 ndict,
+                                  unsigned char*      huffman_dict,
+                                  int                 huffman_dictlen,
+                                  const unsigned int* huffman_dict_unpacked,
+                                  int                 huffman_dict_unpackedlen);
 
 #endif

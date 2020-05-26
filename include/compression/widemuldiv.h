@@ -13,12 +13,12 @@
 #define WIDEMULDIV_H
 
 /* Add a unsigned int to a largeint. */
-void Ptngc_largeint_add(const unsigned int v1, unsigned int *largeint, const int n);
+void Ptngc_largeint_add(unsigned int v1, unsigned int* largeint, int n);
 
 /* Multiply v1 with largeint_in and return result in largeint_out */
-void Ptngc_largeint_mul(const unsigned int v1, unsigned int *largeint_in, unsigned int *largeint_out, const int n);
+void Ptngc_largeint_mul(unsigned int v1, unsigned int* largeint_in, unsigned int* largeint_out, int n);
 
 /* Return the remainder from dividing largeint_in with v1. Result of the division is returned in largeint_out */
-unsigned int Ptngc_largeint_div(const unsigned int v1, unsigned int *largeint_in, unsigned int *largeint_out, const int n);
+unsigned int Ptngc_largeint_div(unsigned int v1, unsigned int* largeint_in, unsigned int* largeint_out, int n);
 
 #endif

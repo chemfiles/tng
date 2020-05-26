@@ -12,34 +12,44 @@
 #include <string.h>
 #include "../../include/compression/dict.h"
 
-void Ptngc_comp_canonical_dict(unsigned int *dict, int *ndict)
+void Ptngc_comp_canonical_dict(unsigned int* dict, int* ndict)
 {
-  int i;
-  for (i=0; i<0x20004; i++)
-    dict[i]=i;
+    int i;
+    for (i = 0; i < 0x20004; i++)
+    {
+        dict[i] = i;
+    }
 
-  *ndict=0x20004;
+    *ndict = 0x20004;
 }
 
-void Ptngc_comp_make_dict_hist(unsigned int *vals, const int nvals,
-                         unsigned int *dict, int *ndict,
-                         unsigned int *hist)
+void Ptngc_comp_make_dict_hist(const unsigned int* vals,
+                               const int           nvals,
+                               unsigned int*       dict,
+                               int*                ndict,
+                               unsigned int*       hist)
 {
-  int i;
-  int j=0;
+    int i;
+    int j = 0;
 
-  memset(hist, 0, sizeof(unsigned int)*0x20004);
+    memset(hist, 0, sizeof(unsigned int) * 0x20004);
 
-  for (i=0; i<nvals; i++)
-    hist[vals[i]]++;
-  for (i=0; i<0x20004; i++)
-    if (hist[i]!=0)
-      {
-        hist[j]=hist[i];
-        dict[j]=i;
-        j++;
-        if(j==nvals)
-          break;
-      }
-  *ndict=j;
+    for (i = 0; i < nvals; i++)
+    {
+        hist[vals[i]]++;
+    }
+    for (i = 0; i < 0x20004; i++)
+    {
+        if (hist[i] != 0)
+        {
+            hist[j] = hist[i];
+            dict[j] = i;
+            j++;
+            if (j == nvals)
+            {
+                break;
+            }
+        }
+    }
+    *ndict = j;
 }

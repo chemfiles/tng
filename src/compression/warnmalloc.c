@@ -14,24 +14,26 @@
 #include "../../include/compression/tng_compress.h"
 #include "../../include/compression/warnmalloc.h"
 
-void DECLSPECDLLEXPORT *Ptngc_warnmalloc_x(const size_t size, char *file, const int line)
+void DECLSPECDLLEXPORT* Ptngc_warnmalloc_x(const size_t size, char* file, const int line)
 {
-  void *mem=malloc(size);
-  if (!mem)
+    void* mem = malloc(size);
+    if (!mem)
     {
-      fprintf(stderr,"TRAJNG ERROR: Could not allocate memory of size %lu at %s:%d\n",(unsigned long) size,file,line);
-      exit(EXIT_FAILURE);
+        fprintf(stderr, "TRAJNG ERROR: Could not allocate memory of size %lu at %s:%d\n",
+                (unsigned long)size, file, line);
+        exit(EXIT_FAILURE);
     }
-  return mem;
+    return mem;
 }
 
-void DECLSPECDLLEXPORT *Ptngc_warnrealloc_x(void *old, const size_t size, char *file, const int line)
+void DECLSPECDLLEXPORT* Ptngc_warnrealloc_x(void* old, const size_t size, char* file, const int line)
 {
-  void *mem=realloc(old,size);
-  if (!mem)
+    void* mem = realloc(old, size);
+    if (!mem)
     {
-      fprintf(stderr,"TRAJNG ERROR: Could not allocate memory of size %lu at %s:%d\n",(unsigned long) size,file,line);
-      exit(EXIT_FAILURE);
+        fprintf(stderr, "TRAJNG ERROR: Could not allocate memory of size %lu at %s:%d\n",
+                (unsigned long)size, file, line);
+        exit(EXIT_FAILURE);
     }
-  return mem;
+    return mem;
 }
