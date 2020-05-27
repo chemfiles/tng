@@ -14038,7 +14038,8 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
 
         last_frame_pos = tng_min_i64(n_frames, end_frame_nr - start_frame_nr);
 
-        n_frames_div   = current_frame_pos / *stride_length;
+        n_frames_div = (current_frame_pos % *stride_length) ? current_frame_pos / *stride_length + 1
+                                                            : current_frame_pos / *stride_length;
         n_frames_div_2 = (last_frame_pos % *stride_length) ? last_frame_pos / *stride_length + 1
                                                            : last_frame_pos / *stride_length;
         n_frames_div_2 = tng_max_i64(1, n_frames_div_2);
@@ -14077,7 +14078,8 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
 
             last_frame_pos = tng_min_i64(n_frames, end_frame_nr - current_frame_pos);
 
-            n_frames_div   = current_frame_pos / *stride_length;
+            n_frames_div = (current_frame_pos % *stride_length) ? current_frame_pos / *stride_length + 1
+                                                                : current_frame_pos / *stride_length;
             n_frames_div_2 = (last_frame_pos % *stride_length) ? last_frame_pos / *stride_length + 1
                                                                : last_frame_pos / *stride_length;
             n_frames_div_2 = tng_max_i64(1, n_frames_div_2);
