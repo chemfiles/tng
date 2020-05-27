@@ -6242,46 +6242,6 @@ static tng_function_status tng_frame_set_finalize(struct tng_trajectory* tng_dat
     return (TNG_SUCCESS);
 }
 
-/*
-// ** Sets the name of a file contents block
-//  * @param tng_data is a trajectory data container.
-//  * @param block is the block, of which to change names.
-//  * @param new_name is the new name of the block.
-//  * @return TNG_SUCCESS (0) if successful or TNG_CRITICAL (2) if a major
-//  * error has occured.
-//
-// static tng_function_status tng_block_name_set(tng_trajectory_t tng_data,
-//                                               tng_gen_block_t block,
-//                                               const char *new_name)
-// {
-//     int len;
-//
-//     len = tng_min_size(strlen(new_name) + 1, TNG_MAX_STR_LEN);
-//
-//      * If the currently stored string length is not enough to store the new
-//      * string it is freed and reallocated. *
-//     if(block->name && strlen(block->name) < len)
-//     {
-//         free(block->name);
-//         block->name = 0;
-//     }
-//     if(!block->name)
-//     {
-//         block->name = (char *)malloc(len);
-//         if(!block->name)
-//         {
-//             fprintf(stderr, "TNG library: Cannot allocate memory. %s: %d\n",
-//                    __FILE__, __LINE__);
-//             return(TNG_CRITICAL);
-//         }
-//     }
-//
-//     strncpy(block->name, new_name, len);
-//
-//     return(TNG_SUCCESS);
-// }
-*/
-
 tng_function_status DECLSPECDLLEXPORT tng_atom_residue_get(struct tng_trajectory* tng_data,
                                                            struct tng_atom*       atom,
                                                            tng_residue_t*         residue)
@@ -14470,57 +14430,6 @@ tng_function_status DECLSPECDLLEXPORT tng_util_time_of_frame_get(struct tng_traj
     return (TNG_SUCCESS);
 }
 
-/*
-tng_function_status DECLSPECDLLEXPORT tng_util_trajectory_molecules_get
-                (struct tng_trajectory* tng_data,
-                 int64_t *n_mols,
-                 int64_t **molecule_cnt_list,
-                 tng_molecule_t *mols)
-{
-    tng_trajectory_frame_set_t frame_set;
-
-    TNG_ASSERT(tng_data, "TNG library: Trajectory container not properly setup.");
-    TNG_ASSERT(n_mols, "TNG library: n_mols must not be a NULL pointer.");
-
-    *n_mols = tng_data->n_molecules;
-
-    frame_set = &tng_data->current_trajectory_frame_set;
-    if(tng_data->var_num_atoms_flag && frame_set && frame_set->molecule_cnt_list)
-    {
-        *molecule_cnt_list = frame_set->molecule_cnt_list;
-    }
-    else
-    {
-        *molecule_cnt_list = tng_data->molecule_cnt_list;
-    }
-
-    *mols = tng_data->molecules;
-
-    return(TNG_SUCCESS);
-}
-*/
-/*
-tng_function_status DECLSPECDLLEXPORT tng_util_trajectory_molecule_add
-                (struct tng_trajectory* tng_data,
-                 const char *name,
-                 const int64_t cnt,
-                 tng_molecule_t *mol)
-{
-    tng_function_status stat;
-
-    TNG_ASSERT(name, "TNG library: name must not be a NULL pointer");
-    TNG_ASSERT(cnt>=0, "TNG library: cnt must be >= 0");
-
-    stat = tng_molecule_add(tng_data, name, mol);
-    if(stat != TNG_SUCCESS)
-    {
-        return(stat);
-    }
-    stat = tng_molecule_cnt_set(tng_data, *mol, cnt);
-
-    return(stat);
-}
-*/
 tng_function_status DECLSPECDLLEXPORT tng_util_molecule_particles_get(struct tng_trajectory* tng_data,
                                                                       struct tng_molecule*   mol,
                                                                       int64_t*  n_particles,
@@ -15178,7 +15087,7 @@ tng_function_status DECLSPECDLLEXPORT tng_util_generic_write_interval_set(struct
 
     if (i <= 0)
     {
-        fprintf(stderr, "TNG library: Cannot set writing frequency to %" PRId64 ". %s: %d\n", i,
+        fprintf(stderr, "TNG library: Cannot set writing interval to %" PRId64 ". %s: %d\n", i,
                 __FILE__, __LINE__);
         return (TNG_FAILURE);
     }
@@ -16622,57 +16531,6 @@ tng_function_status DECLSPECDLLEXPORT
     return (TNG_SUCCESS);
 }
 
-/*
-tng_function_status DECLSPECDLLEXPORT tng_util_trajectory_all_data_block_types_get
-                (struct tng_trajectory* tng_data,
-                 int64_t *n_data_blocks,
-                 int64_t **data_block_ids,
-                 char ***data_block_names,
-                 int64_t **stride_lengths,
-                 int64_t **n_values_per_frame,
-                 char **block_types,
-                 char **dependencies,
-                 char **compressions)
-{
-    tng_gen_block_t block;
-    int64_t orig_file_pos, file_pos;
-
-    TNG_ASSERT(tng_data, "TNG library: Trajectory container not properly setup.");
-    TNG_ASSERT(n_data_blocks, "TNG library: The pointer to n_data_blocks must not be NULL.");
-    TNG_ASSERT(data_block_ids, "TNG library: The pointer to the list of data block IDs must not be NULL.");
-    TNG_ASSERT(data_block_names, "TNG library: The pointer to the list of data block names must not be NULL.");
-    TNG_ASSERT(stride_lengths, "TNG library: The pointer to the list of stride lengths must not be NULL.");
-
-    if(tng_input_file_init(tng_data) != TNG_SUCCESS)
-    {
-        return(TNG_CRITICAL);
-    }
-
-    orig_file_pos = ftello(tng_data->input_file);
-
-    fseeko(tng_data->input_file, 0, SEEK_SET);
-    file_pos = 0;
-
-    *n_data_blocks = 0;
-
-    tng_block_init(&block);
-
-    while(file_pos < tng_data->input_file_len &&
-          tng_block_header_read(tng_data, block) != TNG_CRITICAL)
-    {
-        if(block->id > TNG_TRAJECTORY_FRAME_SET)
-        {
-
-        }
-        file_pos += (block->block_contents_size + block->header_contents_size);
-        fseeko(tng_data->input_file, block->block_contents_size, SEEK_CUR);
-    }
-
-    fseeko(tng_data->input_file, orig_file_pos, SEEK_SET);
-
-    return(TNG_SUCCESS);
-}
-*/
 tng_function_status DECLSPECDLLEXPORT tng_util_prepare_append_after_frame(struct tng_trajectory* tng_data,
                                                                           const int64_t prev_frame)
 {

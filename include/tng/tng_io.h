@@ -2213,7 +2213,7 @@ extern "C"
      * must be initialised before using it.
      * @pre \code name != 0 \endcode The pointer to the name string
      * must not be a NULL pointer.
-     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (!) if a minor error
+     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (1) if a minor error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_molecule_name_of_particle_nr_get(tng_trajectory_t tng_data,
@@ -2229,7 +2229,7 @@ extern "C"
      * @pre \code tng_data != 0 \endcode The trajectory container (tng_data)
      * must be initialised before using it.
      * @pre \code id != 0 \endcode The pointer to id must not be a NULL pointer.
-     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (!) if a minor error
+     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (1) if a minor error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_molecule_id_of_particle_nr_get(tng_trajectory_t tng_data,
@@ -2276,7 +2276,7 @@ extern "C"
      * must be initialised before using it.
      * @pre \code name != 0 \endcode The pointer to the name string
      * must not be a NULL pointer.
-     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (!) if a minor error
+     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (1) if a minor error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_chain_name_of_particle_nr_get(tng_trajectory_t tng_data,
@@ -2295,7 +2295,7 @@ extern "C"
      * must be initialised before using it.
      * @pre \code name != 0 \endcode The pointer to the name string
      * must not be a NULL pointer.
-     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (!) if a minor error
+     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (1) if a minor error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_residue_name_of_particle_nr_get(tng_trajectory_t tng_data,
@@ -2312,7 +2312,7 @@ extern "C"
      * @pre \code tng_data != 0 \endcode The trajectory container (tng_data)
      * must be initialised before using it.
      * @pre \code id != 0 \endcode The pointer to id must not be a NULL pointer.
-     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (!) if a minor error
+     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (1) if a minor error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_residue_id_of_particle_nr_get(tng_trajectory_t tng_data,
@@ -2328,7 +2328,7 @@ extern "C"
      * @pre \code tng_data != 0 \endcode The trajectory container (tng_data)
      * must be initialised before using it.
      * @pre \code id != 0 \endcode The pointer to id must not be a NULL pointer.
-     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (!) if a minor error
+     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (1) if a minor error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_global_residue_id_of_particle_nr_get(tng_trajectory_t tng_data,
@@ -2346,7 +2346,7 @@ extern "C"
      * must be initialised before using it.
      * @pre \code name != 0 \endcode The pointer to the name string
      * must not be a NULL pointer.
-     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (!) if a minor error
+     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (1) if a minor error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_atom_name_of_particle_nr_get(tng_trajectory_t tng_data,
@@ -2365,7 +2365,7 @@ extern "C"
      * must be initialised before using it.
      * @pre \code type != 0 \endcode The pointer to the type string
      * must not be a NULL pointer.
-     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (!) if a minor error
+     * @return TNG_SUCCESS (0) if successful or TNG_FAILURE (1) if a minor error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_atom_type_of_particle_nr_get(tng_trajectory_t tng_data,
@@ -2849,7 +2849,7 @@ extern "C"
                                                                         char        hash_mode);
 
     /**
-     * @brief Free data of an array of values (2D).
+     * @brief Free data of an array of values (2D). Obsolete!
      * @param tng_data is a trajectory data container.
      * @param values is the 2D array to free and will be set to 0 afterwards.
      * @param n_frames is the number of frames in the data array.
@@ -2867,7 +2867,7 @@ extern "C"
                                                                char    type);
 
     /**
-     * @brief Free data of an array of values (3D).
+     * @brief Free data of an array of values (3D). Obsolete!
      * @param tng_data is a trajectory data container.
      * @param values is the array to free and will be set to 0 afterwards.
      * @param n_frames is the number of frames in the data array.
@@ -3325,66 +3325,6 @@ extern "C"
                                                                      int64_t          frame_nr,
                                                                      double*          time);
 
-    /*
-     * @brief High-level function for getting the molecules in the mol system.
-     * @param tng_data is the trajectory containing the mol system.
-     * @param n_mols is set to the number of molecules in the system.
-     * @param molecule_cnt_list will be pointing to the list of counts of each molecule
-     * in the mol system.
-     * @param mols pointing to the list of molecules in the mol system.
-     * @pre \code tng_data != 0 \endcode The trajectory container (tng_data)
-     * must be initialised before using it.
-     * @pre \code n_mols != 0 \endcode The pointer to the number of molecules must
-     * not be a NULL pointer.
-     * @return TNG_SUCCESS (0) if successful.
-     */
-    /*tng_function_status DECLSPECDLLEXPORT tng_util_trajectory_molecules_get
-                    (const tng_trajectory_t tng_data,
-                     int64_t *n_mols,
-                     int64_t **molecule_cnt_list,
-                     tng_molecule_t *mols);
-    */
-    /*
-     * @brief High-level function for adding a molecule to the mol system.
-     * @param tng_data is the trajectory containing the mol system.
-     * @param name is the name of the molecule to add.
-     * @param cnt is the count of the molecule.
-     * @param mol is set to point to the newly created molecule.
-     * @pre \code name != 0 \endcode The pointer to the name must not be a
-     * NULL pointer.
-     * @pre \code cnt >= 0 \endcode The requested count must be >= 0.
-     * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured or TNG_CRITICAL (2) if a major error has occured.
-     */
-    /*tng_function_status DECLSPECDLLEXPORT tng_util_trajectory_molecule_add
-                    (const tng_trajectory_t tng_data,
-                     const char *name,
-                     const int64_t cnt,
-                     tng_molecule_t *mol);
-    */
-    /*
-    // tng_function_status DECLSPECDLLEXPORT tng_util_molecule_particles_get
-    //                 (const tng_trajectory_t tng_data,
-    //                  const tng_molecule_t mol,
-    //                  int64_t *n_particles,
-    //                  char ***names,
-    //                  char ***types,
-    //                  char ***res_names,
-    //                  int64_t **res_ids,
-    //                  char ***chain_names,
-    //                  int64_t **chain_ids);
-    //
-    // tng_function_status DECLSPECDLLEXPORT tng_util_molecule_particles_set
-    //                 (const tng_trajectory_t tng_data,
-    //                  tng_molecule_t mol,
-    //                  const int64_t n_particles,
-    //                  const char **names,
-    //                  const char **types,
-    //                  const char **res_names,
-    //                  const int64_t *res_ids,
-    //                  const char **chain_names,
-    //                  const int64_t *chain_ids);
-    */
     /**
      * @brief High-level function for reading the positions of all particles
      * from all frames.
@@ -3402,8 +3342,8 @@ extern "C"
      * @pre \code stride_length != 0 \endcode The pointer to the stride length
      * must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured (such as not finding a positions block or the datatype not
+     * being float) or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_pos_read(tng_trajectory_t tng_data,
                                                             float**          positions,
@@ -3426,8 +3366,8 @@ extern "C"
      * @pre \code stride_length != 0 \endcode The pointer to the stride length
      * must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured (such as not finding a velocities block or the datatype not
+     * being float) or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_vel_read(tng_trajectory_t tng_data,
                                                             float**          velocities,
@@ -3450,8 +3390,8 @@ extern "C"
      * @pre \code stride_length != 0 \endcode The pointer to the stride length
      * must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured (such as not finding a force block or the datatype not
+     * being float) or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_force_read(tng_trajectory_t tng_data,
                                                               float**          forces,
@@ -3477,8 +3417,8 @@ extern "C"
      * @pre \code stride_length != 0 \endcode The pointer to the stride length
      * must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured (such as not finding a box shape block or the datatype not
+     * being float) or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_box_shape_read(tng_trajectory_t tng_data,
                                                                   float**          box_shape,
@@ -3512,8 +3452,8 @@ extern "C"
      * @pre \code retrieved_time != 0 \endcode The pointer to the time of the
      * returned data must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured (such as the block_id not found) or TNG_CRITICAL (2) if a
+     * major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_particle_data_next_frame_read(tng_trajectory_t tng_data,
                                                                                  int64_t block_id,
@@ -3547,8 +3487,8 @@ extern "C"
      * @pre \code retrieved_time != 0 \endcode The pointer to the time of the
      * returned data must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured (such as the block_id not found) or TNG_CRITICAL (2) if a
+     * major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT
                         tng_util_non_particle_data_next_frame_read(tng_trajectory_t tng_data,
@@ -3579,8 +3519,8 @@ extern "C"
      * @pre \code stride_length != 0 \endcode The pointer to the stride length
      * must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured (such as not finding a positions block or the datatype not
+     * being float) or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_pos_read_range(tng_trajectory_t tng_data,
                                                                   int64_t          first_frame,
@@ -3609,8 +3549,8 @@ extern "C"
      * @pre \code stride_length != 0 \endcode The pointer to the stride length
      * must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured (such as not finding a velocities block or the datatype not
+     * being float) or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_vel_read_range(tng_trajectory_t tng_data,
                                                                   int64_t          first_frame,
@@ -3639,8 +3579,8 @@ extern "C"
      * @pre \code stride_length != 0 \endcode The pointer to the stride length
      * must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured (such as not finding a force block or the datatype not
+     * being float) or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_force_read_range(tng_trajectory_t tng_data,
                                                                     int64_t          first_frame,
@@ -3675,8 +3615,8 @@ extern "C"
      * @pre \code stride_length != 0 \endcode The pointer to the stride length
      * must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured (such as not finding a box shape block or the datatype not
+     * being float) or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_box_shape_read_range(tng_trajectory_t tng_data,
                                                                         int64_t  first_frame,
@@ -3709,7 +3649,7 @@ extern "C"
      * compression are only used if the data block did not exist before calling
      * this function, in which case it is created.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
+     * has occured (such as i < 0) or TNG_CRITICAL (2) if a major error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_generic_write_interval_set(tng_trajectory_t tng_data,
@@ -3746,7 +3686,7 @@ extern "C"
      * compression are only used if the data block did not exist before calling
      * this function, in which case it is created.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
+     * has occured (such as i < 0) or TNG_CRITICAL (2) if a major error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT
@@ -3783,8 +3723,7 @@ extern "C"
      * This function is replaced by the more correcly named
      * tng_util_generic_write_interval_set(), but is kept for compatibility.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_generic_write_frequency_set(tng_trajectory_t tng_data,
                                                                                int64_t          i,
@@ -3806,8 +3745,7 @@ extern "C"
      * @details This function uses tng_util_generic_write_interval_set() and will
      * create a positions data block if none exists.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_pos_write_interval_set(tng_trajectory_t tng_data,
                                                                           int64_t          i);
@@ -3824,8 +3762,7 @@ extern "C"
      * @details This function uses tng_util_generic_write_interval_set() and will
      * create a positions data block if none exists.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_pos_write_interval_double_set(tng_trajectory_t tng_data,
                                                                                  int64_t i);
@@ -3844,8 +3781,7 @@ extern "C"
      * This function is replaced by the more correcly named
      * tng_util_pos_write_interval_set(), but is kept for compatibility.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_pos_write_frequency_set(tng_trajectory_t tng_data,
                                                                            int64_t          i);
@@ -3862,8 +3798,7 @@ extern "C"
      * @details This function uses tng_util_generic_write_interval_set() and will
      * create a velocities data block if none exists.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_vel_write_interval_set(tng_trajectory_t tng_data,
                                                                           int64_t          i);
@@ -3880,8 +3815,7 @@ extern "C"
      * @details This function uses tng_util_generic_write_interval_set() and will
      * create a velocities data block if none exists.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_vel_write_interval_double_set(tng_trajectory_t tng_data,
                                                                                  int64_t i);
@@ -3897,8 +3831,7 @@ extern "C"
      * This function is replaced by the more correcly named
      * tng_util_vel_write_interval_set(), but is kept for compatibility.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_vel_write_frequency_set(tng_trajectory_t tng_data,
                                                                            int64_t          i);
@@ -3915,8 +3848,7 @@ extern "C"
      * @details This function uses tng_util_generic_write_interval_set() and will
      * create a forces data block if none exists.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_force_write_interval_set(tng_trajectory_t tng_data,
                                                                             int64_t          i);
@@ -3933,8 +3865,7 @@ extern "C"
      * @details This function uses tng_util_generic_write_interval_set() and will
      * create a forces data block if none exists.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_force_write_interval_double_set(tng_trajectory_t tng_data,
                                                                                    int64_t i);
@@ -3950,8 +3881,7 @@ extern "C"
      * This function is replaced by the more correcly named
      * tng_util_force_write_interval_set(), but is kept for compatibility.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_force_write_frequency_set(tng_trajectory_t tng_data,
                                                                              int64_t          i);
@@ -3968,8 +3898,7 @@ extern "C"
      * @details This function uses tng_util_generic_write_interval_set() and will
      * create a box shape data block if none exists.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_box_shape_write_interval_set(tng_trajectory_t tng_data,
                                                                                 int64_t          i);
@@ -3986,8 +3915,7 @@ extern "C"
      * @details This function uses tng_util_generic_write_interval_set() and will
      * create a box shape data block if none exists.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_box_shape_write_interval_double_set(tng_trajectory_t tng_data,
                                                                                        int64_t i);
@@ -4003,8 +3931,7 @@ extern "C"
      * This function is replaced by the more correcly named
      * tng_util_box_shape_write_interval_set(), but is kept for compatibility.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_box_shape_write_frequency_set(tng_trajectory_t tng_data,
                                                                                  int64_t i);
@@ -4041,8 +3968,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_generic_write(tng_trajectory_t tng_data,
                                                                  int64_t          frame_nr,
@@ -4086,8 +4012,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_generic_double_write(tng_trajectory_t tng_data,
                                                                         int64_t          frame_nr,
@@ -4116,8 +4041,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_pos_write(tng_trajectory_t tng_data,
                                                              int64_t          frame_nr,
@@ -4142,8 +4066,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_pos_double_write(tng_trajectory_t tng_data,
                                                                     int64_t          frame_nr,
@@ -4167,8 +4090,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_vel_write(tng_trajectory_t tng_data,
                                                              int64_t          frame_nr,
@@ -4193,8 +4115,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_vel_double_write(tng_trajectory_t tng_data,
                                                                     int64_t          frame_nr,
@@ -4218,8 +4139,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_force_write(tng_trajectory_t tng_data,
                                                                int64_t          frame_nr,
@@ -4244,8 +4164,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_force_double_write(tng_trajectory_t tng_data,
                                                                       int64_t          frame_nr,
@@ -4268,8 +4187,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_box_shape_write(tng_trajectory_t tng_data,
                                                                    int64_t          frame_nr,
@@ -4293,8 +4211,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_box_shape_double_write(tng_trajectory_t tng_data,
                                                                           int64_t          frame_nr,
@@ -4336,8 +4253,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_generic_with_time_write(tng_trajectory_t tng_data,
                                                                            int64_t      frame_nr,
@@ -4385,8 +4301,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_generic_with_time_double_write(tng_trajectory_t tng_data,
                                                                                   int64_t frame_nr,
@@ -4420,8 +4335,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_pos_with_time_write(tng_trajectory_t tng_data,
                                                                        int64_t          frame_nr,
@@ -4450,8 +4364,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_pos_with_time_double_write(tng_trajectory_t tng_data,
                                                                               int64_t frame_nr,
@@ -4480,8 +4393,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_vel_with_time_write(tng_trajectory_t tng_data,
                                                                        int64_t          frame_nr,
@@ -4510,8 +4422,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_vel_with_time_double_write(tng_trajectory_t tng_data,
                                                                               int64_t frame_nr,
@@ -4540,8 +4451,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_force_with_time_write(tng_trajectory_t tng_data,
                                                                          int64_t          frame_nr,
@@ -4570,8 +4480,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_force_with_time_double_write(tng_trajectory_t tng_data,
                                                                                 int64_t frame_nr,
@@ -4599,8 +4508,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_box_shape_with_time_write(tng_trajectory_t tng_data,
                                                                              int64_t      frame_nr,
@@ -4628,8 +4536,7 @@ extern "C"
      * actually written to disk until the frame set is finished or the TNG
      * trajectory is closed.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
-     * has occured.
+     * has occured or TNG_CRITICAL (2) if a major error has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_box_shape_with_time_double_write(tng_trajectory_t tng_data,
                                                                                     int64_t frame_nr,
@@ -4654,7 +4561,7 @@ extern "C"
      * @pre \code factor != 0 \endcode The pointer to the returned multiplication
      * factor must not be a NULL pointer.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured (such as invalid mode) or TNG_CRITICAL (2) if a major error
+     * has occured (such as the block_id not found) or TNG_CRITICAL (2) if a major error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT tng_util_frame_current_compression_get(tng_trajectory_t tng_data,
@@ -4692,7 +4599,7 @@ extern "C"
      * @pre \code n_requested_data_block_ids == 0 || requested_data_block_ids != 0 \endcode
      * If the number of requested data blocks != 0 then the array of data block IDs must not be NULL.
      * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured or TNG_CRITICAL (2) if a major error
+     * has occured (such as no next frame found) or TNG_CRITICAL (2) if a major error
      * has occured.
      */
     tng_function_status DECLSPECDLLEXPORT
@@ -4704,74 +4611,6 @@ extern "C"
                                                                                 int64_t*  n_data_blocks_in_next_frame,
                                                                                 int64_t** data_block_ids_in_next_frame);
 
-    /* @brief High-level function for getting all data block ids and their names
-     * and stride lengths.
-     * @param tng_data is the trajectory to use.
-     * @param n_data_blocks is set to the number of data blocks in the trajectory.
-     * @param data_block_ids is set to an array (of length
-     * n_data_blocks) that lists the data block IDs in the trajectory.
-     * It must be pointing at NULL or previously allocated memory.
-     * Memory for the array is allocated by this function.
-     * The memory must be freed by the client afterwards or
-     * there will be a memory leak.
-     * @param data_block_names is set to an array (of length
-     * n_data_blocks) that contains the names of the data blocks.
-     * It must be pointing at NULL or previously allocated memory.
-     * Memory for the array is allocated by this function.
-     * The memory must be freed by the client afterwards or
-     * there will be a memory leak.
-     * @param stride_lengths is set to an array (of length
-     * n_data_blocks) that lists the stride lengths of the data blocks.
-     * It must be pointing at NULL or previously allocated memory.
-     * Memory for the array is allocated by this function.
-     * The memory must be freed by the client afterwards or
-     * there will be a memory leak.
-     * @param n_values_per_frame is set to an array (of length
-     * n_data_blocks) that lists the number of values per frame of the data blocks.
-     * It must be pointing at NULL or previously allocated memory.
-     * Memory for the array is allocated by this function.
-     * The memory must be freed by the client afterwards or
-     * there will be a memory leak.
-     * @param block_types is set to an array (of length
-     * n_data_blocks) that lists the block types of the data blocks.
-     * It must be pointing at NULL or previously allocated memory.
-     * Memory for the array is allocated by this function.
-     * The memory must be freed by the client afterwards or
-     * there will be a memory leak.
-     * @param dependencies is set to an array (of length
-     * n_data_blocks) that lists the dependencies of the data blocks.
-     * It must be pointing at NULL or previously allocated memory.
-     * Memory for the array is allocated by this function.
-     * The memory must be freed by the client afterwards or
-     * there will be a memory leak.
-     * @param compressions is set to an array (of length
-     * n_data_blocks) that lists the compressions of the data blocks.
-     * It must be pointing at NULL or previously allocated memory.
-     * Memory for the array is allocated by this function.
-     * The memory must be freed by the client afterwards or
-     * there will be a memory leak.
-     * @pre \code tng_data != 0 \endcode The trajectory container (tng_data)
-     * must be initialised before using it.
-     * @pre \code n_data_blocks != 0 \endcode The pointer to
-     * n_data_blocks must not be NULL.
-     * @pre \code data_block_ids != 0 \endcode The pointer to the
-     * list of data block IDs must not be NULL.
-     * @return TNG_SUCCESS (0) if successful, TNG_FAILURE (1) if a minor error
-     * has occured or TNG_CRITICAL (2) if a major error
-     * has occured.
-     */
-    /*
-    tng_function_status DECLSPECDLLEXPORT tng_util_trajectory_all_data_block_types_get
-                    (const tng_trajectory_t tng_data,
-                     int64_t *n_data_blocks,
-                     int64_t **data_block_ids,
-                     char ***data_block_names,
-                     int64_t **stride_lengths,
-                     int64_t **n_values_per_frame,
-                     char **block_types,
-                     char **dependencies,
-                     char **compressions);
-    */
 
     /** @brief Finds the frame set of the specified frame in order to prepare for writing
      * after it.
