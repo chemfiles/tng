@@ -90,13 +90,12 @@ int main(int argc, char** argv)
         printf("Simulation box shape not set in the file (or could not be read)\n");
     }
 
-    n_strides = (n_frames % stride_length) ? n_frames / stride_length + 1 : n_frames / stride_length;
-
     /* Get the positions of all particles in the requested frame range.
      * The positions are stored in the positions array.
      * N.B. No proper error checks. */
     if (tng_util_pos_read_range(traj, 0, last_frame, &positions, &stride_length) == TNG_SUCCESS)
     {
+        n_strides = (n_frames % stride_length) ? n_frames / stride_length + 1 : n_frames / stride_length;
         /* Print the positions of the wanted particle (zero based) */
         for (i = 0; i < n_strides; i++)
         {
