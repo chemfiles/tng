@@ -5,6 +5,11 @@ endif()
 add_definitions(-DTNG_EXAMPLE_FILES_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests/example_files/") # Directory where to find input test files and save output files.
 
 if(TNG_BUILD_TEST)
+    #add googletest
+    add_subdirectory(googletest)
+    enable_testing()
+    include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+    
     add_executable(tng_testing tng_io_testing.c)
     target_link_libraries(tng_testing tng_io)
     if(UNIX)
