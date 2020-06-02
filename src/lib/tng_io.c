@@ -4518,7 +4518,7 @@ static tng_function_status tng_allocate_particle_data_mem(const struct tng_traje
     n_frames                 = tng_max_i64(1, n_frames);
     data->stride_length      = tng_max_i64(1, stride_length);
     data->n_values_per_frame = n_values_per_frame;
-    frame_alloc = (n_frames % stride_length) ? n_frames / stride_length + 1 : n_frames / stride_length;
+    frame_alloc              = (n_frames - 1) / stride_length + 1;
 
     if (data->datatype == TNG_CHAR_DATA)
     {
@@ -4864,7 +4864,7 @@ static tng_function_status tng_allocate_data_mem(const struct tng_trajectory* tn
     data->stride_length      = tng_max_i64(1, stride_length);
     n_frames                 = tng_max_i64(1, n_frames);
     data->n_values_per_frame = n_values_per_frame;
-    frame_alloc = (n_frames % stride_length) ? n_frames / stride_length + 1 : n_frames / stride_length;
+    frame_alloc              = (n_frames - 1) / stride_length + 1;
 
     if (data->datatype == TNG_CHAR_DATA)
     {
@@ -5095,7 +5095,7 @@ static tng_function_status tng_data_read(struct tng_trajectory*      tng_data,
         tot_n_particles = 1;
     }
 
-    n_frames_div = (n_frames % stride_length) ? n_frames / stride_length + 1 : n_frames / stride_length;
+    n_frames_div = (n_frames - 1) / stride_length + 1;
 
     contents = (char*)malloc(block_data_len);
     if (!contents)
@@ -5429,7 +5429,7 @@ static tng_function_status tng_data_block_write(struct tng_trajectory*          
         n_frames -= (data->first_frame_with_data - frame_set->first_frame);
     }
 
-    frame_step = (n_frames % stride_length) ? n_frames / stride_length + 1 : n_frames / stride_length;
+    frame_step = (n_frames - 1) / stride_length + 1;
 
     /* TNG compression will use compression precision to get integers from
      * floating point data. The compression multiplier stores that information
@@ -11915,7 +11915,7 @@ static tng_function_status tng_gen_data_block_add(struct tng_trajectory* tng_dat
             frame_set->n_unwritten_frames = n_frames;
         }
 
-        n_frames_div = (n_frames % stride_length) ? n_frames / stride_length + 1 : n_frames / stride_length;
+        n_frames_div = (n_frames - 1) / stride_length + 1;
 
         if (datatype == TNG_CHAR_DATA)
         {
@@ -13416,7 +13416,7 @@ static tng_function_status tng_gen_data_vector_get(struct tng_trajectory* tng_da
     *n_values_per_frame = data->n_values_per_frame;
     *stride_length      = data->stride_length;
 
-    n_frames_div = (*n_frames % *stride_length) ? *n_frames / *stride_length + 1 : *n_frames / *stride_length;
+    n_frames_div = (*n_frames - 1) / *stride_length + 1;
 
     full_data_len = n_frames_div * size * (*n_values_per_frame);
     if (is_particle_data == TNG_TRUE)
@@ -13955,8 +13955,7 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
         default: size = sizeof(double);
     }
 
-    n_frames_div = (tot_n_frames % *stride_length) ? tot_n_frames / *stride_length + 1
-                                                   : tot_n_frames / *stride_length;
+    n_frames_div = (tot_n_frames - 1) / *stride_length + 1;
 
     full_data_len = n_frames_div * size * (*n_values_per_frame);
     if (is_particle_data)
@@ -13998,11 +13997,8 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
 
         last_frame_pos = tng_min_i64(n_frames, end_frame_nr - start_frame_nr);
 
-        n_frames_div = (current_frame_pos % *stride_length) ? current_frame_pos / *stride_length + 1
-                                                            : current_frame_pos / *stride_length;
-        n_frames_div_2 = (last_frame_pos % *stride_length) ? last_frame_pos / *stride_length + 1
-                                                           : last_frame_pos / *stride_length;
-        n_frames_div_2 = tng_max_i64(1, n_frames_div_2);
+        n_frames_div   = (current_frame_pos - 1) / *stride_length + 1;
+        n_frames_div_2 = (last_frame_pos - 1) / *stride_length + 1;
 
         memcpy(*values, (char*)current_values + n_frames_div * frame_size, n_frames_div_2 * frame_size);
 
@@ -14038,11 +14034,8 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
 
             last_frame_pos = tng_min_i64(n_frames, end_frame_nr - current_frame_pos);
 
-            n_frames_div = (current_frame_pos % *stride_length) ? current_frame_pos / *stride_length + 1
-                                                                : current_frame_pos / *stride_length;
-            n_frames_div_2 = (last_frame_pos % *stride_length) ? last_frame_pos / *stride_length + 1
-                                                               : last_frame_pos / *stride_length;
-            n_frames_div_2 = tng_max_i64(1, n_frames_div_2);
+            n_frames_div   = (current_frame_pos - 1) / *stride_length + 1;
+            n_frames_div_2 = (last_frame_pos - 1) / *stride_length + 1;
 
             memcpy(((char*)*values) + n_frames_div * frame_size, current_values, n_frames_div_2 * frame_size);
 
