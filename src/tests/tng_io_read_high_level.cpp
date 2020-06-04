@@ -76,28 +76,51 @@ int main(int argc, char* argv[])
         }
     }
 
-    int64_t nfr = end - start + 1;
 
     printf("TNG IO READ TESTS\n");
     printf("-----------------\n\n");
     printf("Trajectory %s \n", trajname);
-    printf("reading between %ld and %ld TNG frames (steps) with number of frames %ld \n", start, end, nfr);
+    printf("reading between %ld and %ld TNG frames (steps) specified on command line \n", start, end);
     printf("-----------------\n\n");
 
     // values into which we put the trajectory data
     // C function signatures requires *float
     float * positions = nullptr, *box_shape = nullptr, *forces = nullptr, *velocities = nullptr;
     int64_t n_particles, n_frames, tot_n_steps, i, j, stride_length, n_strides;
+    tng_function_status stat;
 
     // read
     tng_trajectory_t traj;
-    tng_util_trajectory_open(trajname, 'r', &traj);
+    stat = tng_util_trajectory_open(trajname, 'r', &traj);
 
-    // num_particles
-    if (tng_num_particles_get(traj, &n_particles) != TNG_SUCCESS)
+    // failure or critical is exit(1)
+    if (stat != TNG_SUCCESS)
+    {
+        printf("Test Trajectory Open: FAIL\n");
+        if (stat != TNG_FAILURE)
+        {
+            printf("Failure is TNG_CRITICAL\n");
+        }
+        tng_util_trajectory_close(&traj);
+        exit(1);
+    }
+    else
+    {
+        printf("Test traj open:      PASS\n");
+    }
+    printf("-------------------------\n\n");
+
+    // failure or critical is exit(1)
+    stat = tng_num_particles_get(traj, &n_particles);
+    if (stat != TNG_SUCCESS)
     {
         printf("Test read particles: FAIL\n");
+        if (stat != TNG_FAILURE)
+        {
+            printf("Failure is TNG_CRITICAL\n");
+        }
         tng_util_trajectory_close(&traj);
+        exit(1);
     }
     else
     {
@@ -110,11 +133,17 @@ int main(int argc, char* argv[])
     printf("-------------------------\n\n");
 
 
-    // frames
-    if (tng_num_frames_get(traj, &tot_n_steps) != TNG_SUCCESS)
+    // failure or critical is exit(1)
+    stat = tng_num_frames_get(traj, &tot_n_steps);
+    if (stat != TNG_SUCCESS)
     {
         printf("Test read frames:    FAIL\n");
+        if (stat != TNG_FAILURE)
+        {
+            printf("Failure is TNG_CRITICAL\n");
+        }
         tng_util_trajectory_close(&traj);
+        exit(1);
     }
     else
     {
@@ -126,11 +155,32 @@ int main(int argc, char* argv[])
     }
     printf("-------------------------\n\n");
 
+    // correct for if the number of frames is less than the default
+    if (end > tot_n_steps - 1)
+    {
+        end = tot_n_steps - 1;
+        if (verbose)
+        {
+            printf("Frame range clipped to shorter trajectory \nFrame range to actually read "
+                   "between  start = %ld end = %ld \n\n",
+                   start, end);
+        }
+    }
 
-    // box shape
-    if (tng_util_box_shape_read_range(traj, start, end, &box_shape, &stride_length) != TNG_SUCCESS)
+    int64_t nfr = end - start + 1;
+
+
+    // critical is exit(1)
+    stat = tng_util_box_shape_read_range(traj, start, end, &box_shape, &stride_length);
+    if (stat != TNG_SUCCESS)
     {
         printf("Test read box:       FAIL\n");
+        if (stat != TNG_FAILURE)
+        {
+            printf("Failure is TNG_CRITICAL\n");
+            tng_util_trajectory_close(&traj);
+            exit(1);
+        }
     }
     else
     {
@@ -157,10 +207,17 @@ int main(int argc, char* argv[])
     printf("-------------------------\n\n");
 
 
-    // positions
-    if (tng_util_pos_read_range(traj, start, end, &positions, &stride_length) != TNG_SUCCESS)
+    // critical is exit(1)
+    stat = tng_util_pos_read_range(traj, start, end, &positions, &stride_length);
+    if (stat != TNG_SUCCESS)
     {
         printf("Test read positions: FAIL\n");
+        if (stat != TNG_FAILURE)
+        {
+            printf("Failure is TNG_CRITICAL\n");
+            tng_util_trajectory_close(&traj);
+            exit(1);
+        }
     }
     else
     {
@@ -191,10 +248,17 @@ int main(int argc, char* argv[])
     printf("-------------------------\n\n");
 
 
-    // forces
-    if (tng_util_force_read(traj, &forces, &stride_length) != TNG_SUCCESS)
+    // critical is exit(1)
+    stat = tng_util_force_read_range(traj, start, end, &forces, &stride_length);
+    if (stat != TNG_SUCCESS)
     {
         printf("Test read forces:    FAIL\n");
+        if (stat != TNG_FAILURE)
+        {
+            printf("Failure is TNG_CRITICAL\n");
+            tng_util_trajectory_close(&traj);
+            exit(1);
+        }
     }
     else
     {
@@ -203,9 +267,16 @@ int main(int argc, char* argv[])
     printf("-------------------------\n\n");
 
     // velocities
-    if (tng_util_vel_read(traj, &velocities, &stride_length) != TNG_SUCCESS)
+    stat = tng_util_vel_read_range(traj, start, end, &velocities, &stride_length);
+    if (stat != TNG_SUCCESS)
     {
         printf("Test read vels:      FAIL\n");
+        if (stat != TNG_FAILURE)
+        {
+            printf("Failure is TNG_CRITICAL\n");
+            tng_util_trajectory_close(&traj);
+            exit(1);
+        }
     }
     else
     {
