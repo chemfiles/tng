@@ -13878,8 +13878,7 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
         }
         file_pos = ftello(tng_data->input_file);
         /* Read until next frame set block */
-        stat = tng_block_header_read(tng_data, block);
-        while (file_pos < tng_data->input_file_len && stat != TNG_CRITICAL
+        while (file_pos < tng_data->input_file_len && tng_block_header_read(tng_data, block) != TNG_CRITICAL
                && block->id != TNG_TRAJECTORY_FRAME_SET && block->id != -1)
         {
             if (block->id == block_id || block->id == TNG_PARTICLE_MAPPING)
@@ -13888,20 +13887,12 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
                 if (stat != TNG_CRITICAL)
                 {
                     file_pos = ftello(tng_data->input_file);
-                    if (file_pos < tng_data->input_file_len)
-                    {
-                        stat = tng_block_header_read(tng_data, block);
-                    }
                 }
             }
             else
             {
                 file_pos += block->block_contents_size + block->header_contents_size;
                 fseeko(tng_data->input_file, block->block_contents_size, SEEK_CUR);
-                if (file_pos < tng_data->input_file_len)
-                {
-                    stat = tng_block_header_read(tng_data, block);
-                }
             }
         }
         tng_block_destroy(&block);
