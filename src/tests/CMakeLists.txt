@@ -6,6 +6,7 @@ add_definitions(-DTNG_EXAMPLE_FILES_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests
 
 if(TNG_BUILD_TEST)
     #add googletest
+    Include(GoogleTest)
     add_subdirectory(googletest)
     enable_testing()
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
@@ -33,6 +34,18 @@ if(TNG_BUILD_TEST)
       set_property(TARGET tng_io_read_high_level APPEND PROPERTY COMPILE_DEFINITIONS USE_STD_INTTYPES_H=1)
     endif()
     set_property(TARGET tng_io_read_high_level PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)
+
+    add_executable(regtest regression_gtest.cpp)
+    target_link_libraries(regtest tng_io)
+    target_link_libraries(regtest gtest gtest_main)
+    gtest_discover_tests(regtest WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)
+    if(UNIX)
+        target_link_libraries(regtest m)
+    endif()
+    if(HAVE_INTTYPES_H)
+      set_property(TARGET regtest APPEND PROPERTY COMPILE_DEFINITIONS USE_STD_INTTYPES_H=1)
+    endif()
+    set_property(TARGET regtest PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)
     
 endif()
 
