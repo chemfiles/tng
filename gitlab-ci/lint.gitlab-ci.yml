@@ -79,6 +79,7 @@ clang-format:
   stage: lint
   image: gromacs/ci-docs-llvm:master
   tags: []
+  dependencies: []
   variables:
     COMPILER_MAJOR_VERSION: 7
     KUBERNETES_CPU_LIMIT: 1
@@ -110,6 +111,7 @@ copyright-check:
   stage: lint
   image: gromacs/ci-docs-llvm:master
   tags: []
+  dependencies: []
   variables:
     KUBERNETES_CPU_LIMIT: 1
     KUBERNETES_CPU_REQUEST: 1
