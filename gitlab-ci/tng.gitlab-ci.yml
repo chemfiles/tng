@@ -189,6 +189,7 @@ tng:clang-9:build:
   script:
     - cd $BUILD_DIR/bin/tests
     - ./tng_testing
+    - ./regtest
   artifacts:
     paths:
       - $BUILD_DIR/bin/tests
