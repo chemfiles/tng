@@ -65,6 +65,7 @@ exec 1>&2
 
 clangtidy_mode=`git config hooks.clangtidymode`
 clangformat_mode=`git config hooks.clangformatmode`
+copyright_mode=`git config hooks.copyrightmode`
 if [ -z "$clangtidy_mode" ]
 then
     clangtidy_mode=off
@@ -73,8 +74,12 @@ if [ -z "$clangformat_mode" ]
 then
     clangformat_mode=off
 fi
+if [ -z "$copyright_mode" ]
+then
+    copyright_mode=off
+fi
 
-if [[ -f admin/clang-tidy.sh && \
+if [[ -f ci-scripts/clang-tidy.sh && \
       ( "$clangtidy_mode" != "off" ) ]]
 then
     runclangtidy_path=`git config hooks.runclangtidypath`
@@ -85,7 +90,7 @@ then
         exit 1
     fi
     export RUN_CLANG_TIDY="$runclangtidy_path"
-    admin/clang-tidy.sh check-index --rev=$against \
+    ci-scripts/clang-tidy.sh check-index --rev=$against \
         --tidy="$clangtidy_mode"
     stat=$?
     if [ $stat -eq 1 ] ; then
@@ -96,7 +101,7 @@ then
     fi
 fi
 
-if [[ -f admin/clang-format.sh && \
+if [[ -f ci-scripts/clang-format.sh && \
       ( "$clangformat_mode" != "off" ) ]]
 then
     clangformat_path=`git config hooks.clangformatpath`
@@ -106,13 +111,27 @@ then
         exit 1
     fi
     export CLANG_FORMAT="$clangformat_path"
-    admin/clang-format.sh check-index --rev=$against \
+    ci-scripts/clang-format.sh check-index --rev=$against \
         --format="$clangformat_mode"
     stat=$?
     if [ $stat -eq 1 ] ; then
         exit 1
     elif [ $stat -ne 0 ] ; then
         echo "Source code formatting check with clang-format failed"
+        exit 1
+    fi
+fi
+
+if [[ -f ci-scripts/copyright.sh && \
+      ( "$copyright_mode" != "off" ) ]]
+then
+    ci-scripts/copyright.sh check-index --rev=$against \
+        --copyright="$copyright_mode"
+    stat=$?
+    if [ $stat -eq 1 ] ; then
+        exit 1
+    elif [ $stat -ne 0 ] ; then
+        echo "Copyright information check failed"
         exit 1
     fi
 fi

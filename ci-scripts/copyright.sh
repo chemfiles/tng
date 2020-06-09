@@ -17,29 +17,61 @@
 #
 # Check out http://www.gromacs.org for more information.
 
-# This script runs clang tidy checks on modified files and
+# Original header of this file from the GROMACS source.
+# This file is part of the GROMACS molecular simulation package.
+#
+# Copyright (c) 2019,2020, by the GROMACS development team, led by
+# Mark Abraham, David van der Spoel, Berk Hess, and Erik Lindahl,
+# and including many others, as listed in the AUTHORS file in the
+# top-level source directory and at http://www.gromacs.org.
+#
+# GROMACS is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation; either version 2.1
+# of the License, or (at your option) any later version.
+#
+# GROMACS is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with GROMACS; if not, see
+# http://www.gnu.org/licenses, or write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA.
+#
+# If you want to redistribute modifications to GROMACS, please
+# consider that scientific software is very special. Version
+# control is crucial - bugs must be traceable. We will be happy to
+# consider code for inclusion in the official distribution, but
+# derived work must not be called official GROMACS. Details are found
+# in the README & COPYING files - if they are missing, get the
+# official version at http://www.gromacs.org.
+#
+# To help us fund GROMACS development, we humbly ask that you cite
+# the research papers on the package. Check out http://www.gromacs.org.
+
+# This script runs copyright header checks on modified files and
 # reports/applies the necessary changes.
 #
-# See `clang-tidy.sh -h` for a brief usage, and docs/dev-manual/code-formatting.rst
+# See `copyright.sh -h` for a brief usage, and docs/dev-manual/code-formatting.rst
 # for more details.
 
 # Parse command-line arguments
 function usage() {
-    echo "usage: clang-tidy.sh [-f|--force] [--parallel=#Jobs] [--rev=REV]"
-    echo "           [--tidy=(off|check)]"
+    echo "usage: copyright.sh [-f|--force] [--rev=REV]"
+    echo "           [--copyright=<cmode>]"
     echo "           [--warnings=<file>] [<action>]"
-    echo "           [-B=<builddir>]"
     echo "<action>: (check*|diff|update)[-(index|workdir*)] (*=default)"
+    echo "<cmode>:  off|add|update*|replace|full"
 }
 
 action="check-workdir"
 declare -a diffargs
-baserev="HEAD"
+baserev="origin/master"
 force=
-tidy_mode=check
+copyright_mode=update
 warning_file=
-builddir=
-concurrency=2
 for arg in "$@" ; do
     if [[ "$arg" == "check-index" || "$arg" == "check-workdir" || \
           "$arg" == "diff-index" || "$arg" == "diff-workdir" || \
@@ -50,24 +82,14 @@ for arg in "$@" ; do
         action=$arg-workdir
     elif [[ "$action" == diff-* ]] ; then
         diffargs+=("$arg")
-    elif [[ "$arg" == --tidy=* ]] ; then
-        tidy_mode=${arg#--tidy=}
-        if [[ "$tidy_mode" != "off" && "$tidy_mode" != "check" ]] ; then
-            echo "Unknown option: $arg"
-            echo
-            usage
-            exit 2
-        fi
+    elif [[ "$arg" == --copyright=* ]] ; then
+        copyright_mode=${arg#--copyright=}
     elif [[ "$arg" == "-f" || "$arg" == "--force" ]] ; then
         force=1
-    elif [[ "$arg" == --parallel=* ]] ; then
-        concurrency=${arg#--parallel=}
     elif [[ "$arg" == --rev=* ]] ; then
         baserev=${arg#--rev=}
     elif [[ "$arg" == --warnings=* ]] ; then
         warning_file=${arg#--warnings=}
-    elif [[ "$arg" == -B=* ]] ; then
-        builddir=${arg#-B=}
     elif [[ "$arg" == "-h" || "$arg" == "--help" ]] ; then
         usage
         exit 0
@@ -79,34 +101,13 @@ for arg in "$@" ; do
     fi
 done
 
-# Check that format is present
-if [[ "$tidy_mode" != "off" ]]
-then
-    if [ -z "$RUN_CLANG_TIDY" ]
-    then
-        RUN_CLANG_TIDY=`git config hooks.runclangtidypath`
-    fi
-    if [ -z "$RUN_CLANG_TIDY" ]
-    then
-        echo "Please set the path to run-clang-tidy using the git hook"
-        echo "git config hooks.runclangtidypath /path/to/run-clang-tidy-9.py"
-        echo "or by setting an environment variable, e.g."
-        echo "RUN_CLANG_TIDY=/path/to/run-clang-tidy-9.py"
-        exit 2
-    fi
-    if ! which "$RUN_CLANG_TIDY" 1>/dev/null
-    then
-        echo "run-clang-tidy-9.py not found: $RUN_CLANG_TIDY"
-        exit 2
-    fi
-fi
-
 # Switch to the root of the source tree and check the config file
 srcdir=`git rev-parse --show-toplevel`
-pushd $srcdir >/dev/null || exit
+pushd $srcdir >/dev/null
+admin_dir=$srcdir/ci-scripts
 
 # Actual processing starts: create a temporary directory
-tmpdir=`mktemp -d -t gmxclangtidy.XXXXXX`
+tmpdir=`mktemp -d -t gmxuncrust.XXXXXX`
 
 # Produce a list of changed files
 # Only include files that have proper filter set in .gitattributes
@@ -120,10 +121,10 @@ cut -f2 <$tmpdir/difflist | \
     git check-attr --stdin filter | \
     sed -e 's/.*: filter: //' | \
     paste $tmpdir/difflist - | \
-    grep -E '(complete_formatting|clangformat|copyright|includesort)$' >$tmpdir/filtered
+    grep -E '(complete_formatting|uncrustify|copyright|includesort)$' >$tmpdir/filtered
 cut -f2 <$tmpdir/filtered >$tmpdir/filelist_all
-grep -E '(complete_formatting|clangformat)$' <$tmpdir/filtered | \
-    cut -f2 >$tmpdir/filelist_clangtidy
+grep -E '(complete_formatting|copyright)$' <$tmpdir/filtered | \
+    cut -f2 >$tmpdir/filelist_copyright
 git diff-files --name-only | grep -Ff $tmpdir/filelist_all >$tmpdir/localmods
 
 # Extract changed files to a temporary directory
@@ -131,52 +132,51 @@ mkdir $tmpdir/org
 if [[ $action == *-index ]] ; then
     git checkout-index --prefix=$tmpdir/org/ --stdin <$tmpdir/filelist_all
 else
-    rsync --files-from=$tmpdir/filelist_all -a $srcdir/ $tmpdir/org/ 
+    rsync --files-from=$tmpdir/filelist_all $srcdir $tmpdir/org
 fi
-# check for the existence of the compile_commands.json file and abort
-# if it is not present. If we don't have a build directory, try the
-# current source directory.
-if [ -z $builddir ] ; then
-    builddir=$srcdir
-fi
-if [[ ! -f $builddir/compile_commands.json ]] ; then
-    echo "Could not find compile_commands.json in builddir=$builddir"
-    echo "Make sure you gave a correct build tree and that it contains the file!"
-else
-    # Need to have compilation database file available somewhere above where we are using it
-    rsync -a $builddir/compile_commands.json $tmpdir/org
-fi
-# Prepare directory to use for comparing changed and original files
+# Duplicate the original files to a separate directory, where all changes will
+# be made.
 cp -r $tmpdir/org $tmpdir/new
 
 # Create output file for what was done (in case no messages get written)
 touch $tmpdir/messages
 
-# Run clang-tidy on the temporary directory
-# Can only perform clang-tidy on a non-empty list of files
+# Run uncrustify on the temporary directory
 cd $tmpdir/new
-if [[ $tidy_mode != "off" &&  -s $tmpdir/filelist_clangtidy ]] ; then
-    $RUN_CLANG_TIDY `cat $tmpdir/filelist_clangtidy` -header-filter=.* -j $concurrency -fix -quiet -extra-arg=--cuda-host-only -extra-arg=-nocudainc>$tmpdir/clang-tidy.out 2>&1
-    awk '/warning/,/clang-tidy|^$/' $tmpdir/clang-tidy.out | grep -v "warnings generated." | grep -v "Suppressed .* warnings" | grep -v "clang-analyzer"  | grep -v "to display errors from all non" | sed '/^\s*$/d' > $tmpdir/clang-tidy-warnings.out
-    grep '\berror:' $tmpdir/clang-tidy.out > $tmpdir/clang-tidy-errors.out || true
-    if [ -s $tmpdir/clang-tidy-errors.out ]; then
-        echo "Running of clang-tidy failed. Check output below for errors:"
-        cat $tmpdir/clang-tidy-errors.out
+
+# Update the copyright headers using the requested mode
+if [[ $copyright_mode != "off" ]] ; then
+    cpscript_args="--update-year"
+    case "$copyright_mode" in
+        year)
+            ;;
+        add)
+            cpscript_args+=" --add-missing"
+            ;;
+        update)
+            cpscript_args+=" --add-missing --update-header"
+            ;;
+        replace)
+            cpscript_args+=" --replace-header"
+            ;;
+        full)
+            cpscript_args+=" --add-missing --update-header --replace-header"
+            ;;
+        *)
+            echo "Unknown copyright mode: $copyright_mode"
+            exit 2
+    esac
+    if [[ $action == check-* ]] ; then
+        cpscript_args+=" --check"
+    fi
+    # TODO: Probably better to invoke python explicitly through a customizable
+    # variable.
+    if ! $admin_dir/copyright.py -F $tmpdir/filelist_copyright $cpscript_args >>$tmpdir/messages
+    then
+        echo "Copyright checking failed!"
         rm -rf $tmpdir
         exit 2
     fi
-    # Find the changed files if necessary
-    if [[ $action != diff-* ]] ; then
-        msg="found code issues"
-        if [[ $action == update-* ]] ; then
-            msg="clang-tidy performed"
-        fi
-        rsync --files-from=$tmpdir/filelist_all -a $srcdir/ ./
-        rsync -a $tmpdir/org/ $srcdir/
-        git diff --no-index --name-only ../org/ . | \
-            awk -v msg="$msg" '{sub(/.\//,""); print $0 ": " msg}' >> $tmpdir/messages
-    fi
-    # TODO: Consider checking whether rerunning clang-tidy causes additional changes
 fi
 
 cd $tmpdir
@@ -240,10 +240,7 @@ fi
 popd >/dev/null
 
 # Report what was done
-if [ -s $tmpdir/clang-tidy-warnings.out ] ; then
-    cat $tmpdir/clang-tidy-warnings.out | tee $warning_file
-fi
-sort $tmpdir/messages | tee -a $warning_file
+sort $tmpdir/messages | tee $warning_file
 
 rm -rf $tmpdir
 exit $changes

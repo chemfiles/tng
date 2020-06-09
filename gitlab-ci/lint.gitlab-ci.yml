@@ -86,8 +86,7 @@ clang-format:
     KUBERNETES_MEMORY_LIMIT: 2Gi
     EXTRA_INSTALLS: clang-format-$COMPILER_MAJOR_VERSION
   script:
-    # TODO (issue #3272) `master` is not appropriate for use on release-xxxx branches, how should we handle that?
-    - REV=$(git fetch -q https://gitlab.com/gromacs/gromacs.git master && git show -s --pretty=format:"%h" `git merge-base FETCH_HEAD HEAD`)
+    - REV=$(git fetch -q https://gitlab.com/gromacs/tng.git master && git show -s --pretty=format:"%h" `git merge-base FETCH_HEAD HEAD`)
     - HEAD_REV=$(git show -s --pretty=format:"%h" HEAD)
     - if [[ "$REV" == "$HEAD_REV" ]] ; then
         REV="HEAD~1" ;
@@ -103,37 +102,36 @@ clang-format:
       - clang-format.log
       - formatting.txt
 
-#copyright-check:
-#  extends:
-#    - .variables:default
-#    - .rules:basic-push
-#  cache: {}
-#  stage: lint
-#  image: gromacs/ci-docs-llvm:master
-#  tags: []
-#  variables:
-#    KUBERNETES_CPU_LIMIT: 1
-#    KUBERNETES_CPU_REQUEST: 1
-#    KUBERNETES_MEMORY_REQUEST: 2Gi
-#  script:
-#    # TODO (issue #3272) `master` is not appropriate for use on release-xxxx branches, how should we handle that?
-#    - REV=$(git fetch -q https://gitlab.com/gromacs/gromacs.git master && git show -s --pretty=format:"%h" `git merge-base FETCH_HEAD HEAD`)
-#    - HEAD_REV=$(git show -s --pretty=format:"%h" HEAD)
-#    - if [[ "$REV" == "$HEAD_REV" ]] ; then
-#        REV="HEAD~1" ;
-#      fi
-#    - echo "Revision used for branch point is $REV"
-#    - git show -s $REV
-#    - admin/copyright.sh check --rev=$REV --warnings=copyright.log
-#    - grep -i "copyright year" copyright.log | tee years.log || true
-#    - grep -i "copyright header" copyright.log | tee headers.log || true
-#    - if [[ -s years.log || -s headers.log ]] ; then
-#      echo "Copyright information needs updating" ;
-#      exit 1 ;
-#      fi
-#  artifacts:
-#    when: on_failure
-#    paths:
-#      - copyright.log
-#      - years.log
-#      - headers.log
+copyright-check:
+  extends:
+    - .variables:default
+    - .rules:basic-push
+  cache: {}
+  stage: lint
+  image: gromacs/ci-docs-llvm:master
+  tags: []
+  variables:
+    KUBERNETES_CPU_LIMIT: 1
+    KUBERNETES_CPU_REQUEST: 1
+    KUBERNETES_MEMORY_REQUEST: 2Gi
+  script:
+    - REV=$(git fetch -q https://gitlab.com/gromacs/tng.git master && git show -s --pretty=format:"%h" `git merge-base FETCH_HEAD HEAD`)
+    - HEAD_REV=$(git show -s --pretty=format:"%h" HEAD)
+    - if [[ "$REV" == "$HEAD_REV" ]] ; then
+        REV="HEAD~1" ;
+      fi
+    - echo "Revision used for branch point is $REV"
+    - git show -s $REV
+    - ci-scripts/copyright.sh check --rev=$REV --warnings=copyright.log
+    - grep -i "copyright year" copyright.log | tee years.log || true
+    - grep -i "copyright header" copyright.log | tee headers.log || true
+    - if [[ -s years.log || -s headers.log ]] ; then
+      echo "Copyright information needs updating" ;
+      exit 1 ;
+      fi
+  artifacts:
+    when: on_failure
+    paths:
+      - copyright.log
+      - years.log
+      - headers.log

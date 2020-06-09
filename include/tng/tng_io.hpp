@@ -1,12 +1,21 @@
-/* This code is part of the tng binary trajectory format.
+/*
+ * This code is part of the tng binary trajectory format.
  *
- * Written by Anders Gärdenäs
  * Copyright (c) 2012-2013, The GROMACS development team.
- * Check out http://www.gromacs.org for more information.
+ * Copyright (c) 2020, by the GROMACS development team.
+ * TNG was orginally written by Magnus Lundborg, Daniel Spångberg and
+ * Rossen Apostolov. The API is implemented mainly by Magnus Lundborg,
+ * Daniel Spångberg and Anders Gärdenäs.
  *
+ * Please see the AUTHORS file for more information.
  *
- * This program is free software; you can redistribute it and/or
+ * The TNG library is free software; you can redistribute it and/or
  * modify it under the terms of the Revised BSD License.
+ *
+ * To help us fund future development, we humbly ask that you cite
+ * the research papers on the package.
+ *
+ * Check out http://www.gromacs.org for more information.
  */
 
 #ifndef TNG_IO_HPP
