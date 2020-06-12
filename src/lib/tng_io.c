@@ -13946,6 +13946,11 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
         tot_n_frames = end_frame_nr - start_frame_nr + 1;
     }
 
+    if (start_frame_nr - data->first_frame_with_data + tot_n_frames < *stride_length)
+    {
+        return (TNG_FAILURE);
+    }
+
     switch (*type)
     {
         case TNG_CHAR_DATA: return (TNG_FAILURE);
@@ -13997,7 +14002,7 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
 
         last_frame_pos = tng_min_i64(n_frames - 1, end_frame_nr - start_frame_nr);
 
-        n_frames_div   = (current_frame_pos - 1) / *stride_length + 1;
+        n_frames_div   = current_frame_pos / *stride_length;
         n_frames_div_2 = last_frame_pos / *stride_length + 1;
 
         memcpy(*values, (char*)current_values + n_frames_div * frame_size, n_frames_div_2 * frame_size);
@@ -14034,7 +14039,14 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
 
             last_frame_pos = tng_min_i64(n_frames - 1, end_frame_nr - current_frame_pos);
 
-            n_frames_div   = (current_frame_pos - 1) / *stride_length + 1;
+            if (current_frame_pos < data->first_frame_with_data)
+            {
+                if (end_frame_nr >= data->first_frame_with_data)
+                {
+                    current_frame_pos = data->first_frame_with_data;
+                }
+            }
+            n_frames_div   = current_frame_pos / *stride_length;
             n_frames_div_2 = last_frame_pos / *stride_length + 1;
 
             memcpy(((char*)*values) + n_frames_div * frame_size, current_values, n_frames_div_2 * frame_size);
