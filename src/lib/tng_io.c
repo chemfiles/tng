@@ -14026,6 +14026,18 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
                 return (stat);
             }
 
+            if (is_particle_data == TNG_TRUE)
+            {
+                stat = tng_particle_data_find(tng_data, block_id, &data);
+            }
+            else
+            {
+                stat = tng_data_find(tng_data, block_id, &data);
+            }
+            if (stat != TNG_SUCCESS)
+            {
+                return (stat);
+            }
             stat = tng_gen_data_vector_get(tng_data, block_id, is_particle_data, &current_values, &n_frames,
                                            stride_length, n_particles, n_values_per_frame, type);
 
