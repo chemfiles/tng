@@ -13946,7 +13946,10 @@ static tng_function_status tng_gen_data_vector_interval_get(struct tng_trajector
         tot_n_frames = end_frame_nr - start_frame_nr + 1;
     }
 
-    if (start_frame_nr - data->first_frame_with_data + tot_n_frames < *stride_length)
+    /* Check that the reading starts at a frame with data or that the reading range is
+     * long enough to reach the next frame with data of this type. */
+    if (start_frame_nr > data->first_frame_with_data
+        && start_frame_nr - data->first_frame_with_data + tot_n_frames < *stride_length)
     {
         return (TNG_FAILURE);
     }
