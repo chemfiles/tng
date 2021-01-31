@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 2.8.12)
 
-project(TNG_IO LANGUAGES C CXX)
+project(TNG_IO C CXX)
 
 enable_testing()
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (POLICY CMP0054)
@@ -61,7 +61,8 @@ include(CheckIncludeFile)
 check_include_file(inttypes.h   HAVE_INTTYPES_H)
 
 include(BuildTNG.cmake)
-add_tng_io_library(tng_io OBJECT OWN_ZLIB)
+add_tng_io_library(tng_io OBJECT)
+# add_tng_io_library(tng_io OBJECT OWN_ZLIB)
 # if (ZLIB_FOUND AND NOT TNG_BUILD_OWN_ZLIB)
 #   add_tng_io_library(tng_io)
 # else()
