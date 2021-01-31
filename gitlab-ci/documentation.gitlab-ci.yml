@@ -1,0 +1,77 @@
+# Build documentation and web page.
+
+.docs:configure:
+  extends:
+    - .variables:default
+    - .tng:base:configure
+    - .before_script:default
+  # TODO (#3480) this should be organized more like the current documentation.py script
+  image: gromacs/ci-docs-llvm:master
+  stage: configure
+  cache: {}
+  variables:
+    KUBERNETES_CPU_LIMIT: 1
+    KUBERNETES_CPU_REQUEST: 1
+    KUBERNETES_MEMORY_REQUEST: 2Gi
+    CMAKE_COMPILER_SCRIPT: "-DCMAKE_C_COMPILER=clang-7"
+    CMAKE_EXTRA_OPTIONS: "-DTNG_BUILD_DOCUMENTATION=ON"
+  script:
+    - echo $CMAKE_COMPILER_SCRIPT
+    - echo $CMAKE_EXTRA_OPTIONS
+    - if [[ -d $BUILD_DIR ]] ; then
+      rm -rf $BUILD_DIR && mkdir $BUILD_DIR ;
+      else
+      echo "Preparing new build directory" ;
+      mkdir $BUILD_DIR ;
+      fi
+    - cd $BUILD_DIR
+    - cmake ..
+      -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      $CMAKE_COMPILER_SCRIPT
+      $CMAKE_EXTRA_OPTIONS
+      -DCMAKE_INSTALL_PREFIX=../$INSTALL_DIR 
+      2>&1 | tee cmakeLog.log
+    - awk '/CMake Warning/,/^--|^$/' cmakeLog.log | tee cmakeErrors.log
+    - if [ -s cmakeErrors.log  ] ; then echo "Found CMake warning while processing build"; cat cmakeErrors.log ; exit 1; fi
+    - cd ..
+  artifacts:
+    name: docs-artifacts-$CI_COMMIT_REF_SLUG
+    when: always
+    expire_in: 1 week
+    paths:
+      - $BUILD_DIR
+
+docs:configure:
+  extends:
+    - .docs:configure
+    - .rules:basic-push
+  variables:
+    BUILD_DIR: build-docs
+
+.docs:build:
+  # TODO (#3480) this should be organized more like the current documentation.py script
+  image: gromacs/ci-docs-llvm:master
+  script:
+    - cd $BUILD_DIR
+    - cmake --build . -- -j2
+    - cd ..
+  artifacts:
+    name: docs-artifacts-$CI_COMMIT_REF_SLUG
+    when: always
+    expire_in: 1 week
+    paths:
+      - $BUILD_DIR
+
+docs:build:
+  extends:
+    - .variables:default
+    - .tng:base:build
+    - .use-ccache
+    - .docs:build
+    - .before_script:default
+    - .rules:basic-push
+  stage: documentation
+  needs:
+    - job: docs:configure
+  variables:
+    BUILD_DIR: build-docs

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-project(TNG_IO C)
+project(TNG_IO LANGUAGES C CXX)
+
+enable_testing()
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (POLICY CMP0054)
     # Only interpret ``if()`` arguments as variables or keywords when unquoted.
@@ -30,6 +34,27 @@ option(TNG_BUILD_COMPRESSION_TESTS "Build tests of the TNG compression library" 
 option(TNG_BUILD_OWN_ZLIB "Build and use the internal zlib library" OFF)
 if(NOT TNG_BUILD_OWN_ZLIB)
   find_package(ZLIB QUIET)
+endif()
+
+option(TNG_CLANG_TIDY "Use clang-tidy" OFF)
+if (TNG_CLANG_TIDY)
+   if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+   elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithAssert")
+   elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+   elseif("${CMAKE_BUILD_TYPE}" STREQUAL "ASAN")
+   else()
+       message(FATAL_ERROR "Can only use clang-tidy with build type containing asserts: Debug, RelWithAssert, RelWithDebInfo, ASAN.")
+   endif()
+   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+   mark_as_advanced(CMAKE_EXPORT_COMPILE_COMMANDS)
+   set(CLANG_TIDY "clang-tidy" CACHE STRING "Name of clang-tidy executable")
+   find_program(CLANG_TIDY_EXE NAMES "${CLANG_TIDY}"
+       DOC "Path to clang-tidy executable")
+   if(NOT CLANG_TIDY_EXE)
+       message(FATAL_ERROR "clang-tidy not found.")
+   endif()
+   mark_as_advanced(CLANG_TIDY)
+   mark_as_advanced(CLANG_TIDY_EXE)
 endif()
 
 include(CheckIncludeFile)

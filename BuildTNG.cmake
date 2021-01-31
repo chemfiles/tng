@@ -7,7 +7,7 @@ set(TNG_ROOT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(TNG_MAJOR_VERSION "1")
 set(TNG_MINOR_VERSION "8")
-set(TNG_VERSION_PATCH_LEVEL "2")
+set(TNG_VERSION_PATCH_LEVEL "3")
 set(TNG_IO_VERSION "${TNG_MAJOR_VERSION}.${TNG_MINOR_VERSION}.${TNG_VERSION_PATCH_LEVEL}")
 
 function (TNG_GENERATE_VERSION_H)
@@ -39,6 +39,7 @@ function(add_tng_io_library NAME)
     endforeach()
     foreach(_file ${_tng_io_sources})
         list(APPEND _sources ${TNG_ROOT_SOURCE_DIR}/src/lib/${_file})
+        set_source_files_properties(${TNG_ROOT_SOURCE_DIR}/src/lib/${_file} PROPERTIES LANGUAGE CXX)
     endforeach()
     if(TNG_BUILD_FORTRAN)
         list(APPEND _sources ${TNG_ROOT_SOURCE_DIR}/src/lib/tng_io_fortran.c)
@@ -106,4 +107,10 @@ function(add_tng_io_library NAME)
         set_property(SOURCE ${TNG_ROOT_SOURCE_DIR}/src/lib/md5.c
                      APPEND PROPERTY COMPILE_DEFINITIONS TNG_INTEGER_BIG_ENDIAN)
     endif()
+
+    if (TNG_CLANG_TIDY)
+        set_target_properties(${NAME} PROPERTIES C_CLANG_TIDY
+       "${CLANG_TIDY_EXE};-warnings-as-errors=*;-header-filter=.*")
+    endif()
+
 endfunction()

@@ -1,0 +1,231 @@
+# Build, test, and install variously configured GROMACS installations.
+
+.tng:base:configure:
+  extends:
+    - .variables:default
+  stage: configure
+  cache: {}
+  variables:
+    KUBERNETES_CPU_LIMIT: 1
+    KUBERNETES_CPU_REQUEST: 1
+    KUBERNETES_MEMORY_REQUEST: 2Gi
+    CMAKE_COMPILER_SCRIPT: ""
+    CMAKE_EXTRA_OPTIONS: "-DTNG_BUILD_FORTRAN=ON"
+    CMAKE_BUILD_TYPE_OPTIONS: "-DCMAKE_BUILD_TYPE=Debug"
+  script:
+    - echo $CMAKE_COMPILER_SCRIPT
+    - echo $CMAKE_EXTRA_OPTIONS
+    - echo $CMAKE_BUILD_TYPE_OPTIONS
+    - if [[ -d $BUILD_DIR ]] ; then
+      rm -rf $BUILD_DIR && mkdir $BUILD_DIR ;
+      else
+      echo "Preparing new build directory" ;
+      mkdir $BUILD_DIR ;
+      fi
+    - cd $BUILD_DIR
+    - cmake ..
+      -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      $CMAKE_COMPILER_SCRIPT
+      $CMAKE_EXTRA_OPTIONS
+      $CMAKE_BUILD_TYPE_OPTIONS
+      -DCMAKE_INSTALL_PREFIX=../$INSTALL_DIR 
+      2>&1 | tee cmakeLog.log
+    - awk '/CMake Warning/,/^--|^$/' cmakeLog.log | tee cmakeErrors.log
+    - if [ -s cmakeErrors.log  ] ; then echo "Found CMake warning while processing build"; cat cmakeErrors.log ; exit 1; fi
+    - cd ..
+  artifacts:
+    when: always
+    paths:
+      - $BUILD_DIR
+
+tng:gcc-7:configure:
+  extends:
+    - .tng:base:configure
+    - .use-gcc:base
+    - .rules:merge-requests
+  image: gromacs/cmake-3.13.0-gcc-7-amdopencl-clfft-openmpi:master
+  variables:
+    COMPILER_MAJOR_VERSION: 7
+
+tng:clang-TSAN:configure:
+  extends:
+    - .tng:base:configure
+    - .use-clang:base
+    - .rules:merge-requests
+  image: gromacs/cmake-3.13.0-llvm-8-tsan:master
+  variables:
+    COMPILER_MAJOR_VERSION: 8
+    CMAKE_BUILD_TYPE_OPTIONS: "-DCMAKE_BUILD_TYPE=TSAN"
+
+tng:clang-9:configure:
+  extends:
+   - .tng:base:configure
+   - .use-clang:base
+   - .rules:merge-requests
+  image: gromacs/cmake-3.15.7-llvm-9-openmpi:master
+  variables:
+    COMPILER_MAJOR_VERSION: 9
+
+# activate once a few code issues have been resolved
+#tng:clang-static-analyzer:configure:
+#  extends:
+#    - .tng:base:configure
+#    - .use-clang:base
+#    - .rules:merge-requests
+#  image: gromacs/cmake-3.13.0-llvm-8-tsan:master
+#  variables:
+#     CMAKE_COMPILER_SCRIPT: "-DCMAKE_CXX_COMPILER=/usr/local/libexec/c++-analyzer -DCMAKE_C_COMPILER=gcc"
+#     CMAKE_EXTRA_OPTIONS: "-DGMX_CLANG_ANALYZER=ON
+
+tng:clang-ASAN:configure:
+  extends:
+    - .tng:base:configure
+    - .use-clang:base
+    - .rules:merge-requests
+  image: gromacs/cmake-3.13.0-llvm-8-tsan:master
+  variables:
+    COMPILER_MAJOR_VERSION: 8
+    CMAKE_BUILD_TYPE_OPTIONS: "-DCMAKE_BUILD_TYPE=ASAN"
+
+# Jobs running during build stage
+
+.tng:base:build:
+  stage: build
+  script:
+    - cd $BUILD_DIR
+    - cmake --build . -- -j2 2>&1 | tee buildLogFile.log
+    - awk '/warning/,/warning.*generated|^$/' buildLogFile.log
+      | grep -v "CMake" | tee buildErrors.log || true
+    - grep "cannot be built" buildLogFile.log | tee -a buildErrors.log || true
+    - cmake --build . --target install 2>&1 | tee installBuildLogFile.log
+    - if [ -s buildErrors.log ] ; then echo "Found compiler warning during build"; cat buildErrors.log; exit 1; fi
+    - cd ..
+  artifacts:
+    when: always
+    paths:
+      - $BUILD_DIR
+      - $INSTALL_DIR/
+
+.tng:static-analyzer-build:
+  stage: build
+  script:
+    - cd $BUILD_DIR
+    - scan-build -o scan_html cmake --build . -- -j2 2>&1 | tee buildLogFile.log
+    - awk '/warning/,/warning.*generated|^$/' buildLogFile.log
+      | grep -v "CMake" | tee buildErrors.log || true
+    - grep "cannot be built" buildLogFile.log | tee -a buildErrors.log || true
+    - if [ -s buildErrors.log ] ; then echo "Found compiler warning during build"; cat buildErrors.log; exit 1; fi
+    - cd ..
+  artifacts:
+    when: always
+    paths:
+      - $BUILD_DIR/scan_html
+
+tng:gcc-7:build:
+  extends:
+    - .variables:default
+    - .tng:base:build
+    - .before_script:default
+    - .use-ccache
+    - .rules:merge-requests
+  image: gromacs/cmake-3.13.0-gcc-7-amdopencl-clfft-openmpi:master
+  needs:
+    - job: tng:gcc-7:configure
+      artifacts: true
+
+tng:clang-TSAN:build:
+  extends:
+    - .variables:default
+    - .tng:base:build
+    - .use-clang:base
+    - .use-ccache
+    - .rules:merge-requests
+  image: gromacs/cmake-3.13.0-llvm-8-tsan:master
+  needs:
+    - job: tng:clang-TSAN:configure
+
+tng:clang-ASAN:build:
+  extends:
+    - .variables:default
+    - .tng:base:build
+    - .use-clang:base
+    - .use-ccache
+    - .rules:merge-requests
+  image: gromacs/cmake-3.13.0-llvm-8-tsan:master
+  needs:
+    - job: tng:clang-ASAN:configure
+
+#tng:clang-static-analyzer:build:
+#  extends:
+#    - .variables:default
+#    - .tng:static-analyzer-build
+#    - .use-clang:base
+#    - .use-ccache
+#    - .rules:merge-requests
+#  image: gromacs/cmake-3.13.0-llvm-8-tsan:master
+#  needs:
+#    - job: tng:clang-static-analyzer:configure
+
+tng:clang-9:build:
+  extends:
+    - .variables:default
+    - .tng:base:build
+    - .before_script:default
+    - .use-ccache
+    - .rules:merge-requests
+  image: gromacs/cmake-3.15.7-llvm-9-openmpi:master
+  needs:
+    - job: tng:clang-9:configure
+
+# Jobs running during test stage
+
+.tng:base:test:
+  extends:
+    - .variables:default
+  stage: test
+  cache: {}
+  retry:
+    max: 1
+  script:
+    - cd $BUILD_DIR/bin/tests
+    - ./tng_testing
+    - ./regtest
+  artifacts:
+    paths:
+      - $BUILD_DIR/bin/tests
+    when: on_failure
+    expire_in: 1 week
+
+tng:gcc-7:test:
+  extends:
+    - .tng:base:test
+    - .rules:merge-requests
+  image: gromacs/cmake-3.13.0-gcc-7-amdopencl-clfft-openmpi:master
+  needs:
+    - job: tng:gcc-7:build
+
+tng:clang-TSAN:test:
+  extends:
+    - .tng:base:test
+    - .rules:merge-requests
+  image: gromacs/cmake-3.13.0-llvm-8-tsan:master
+  needs:
+    - job: tng:clang-TSAN:build
+
+tng:clang-ASAN:test:
+  extends:
+    - .tng:base:test
+    - .use-clang:base
+    - .rules:merge-requests
+  image: gromacs/cmake-3.13.0-llvm-8-tsan:master
+  needs:
+    - job: tng:clang-ASAN:build
+
+tng:clang-9:test:
+  extends:
+    - .tng:base:test
+    - .rules:merge-requests
+  image: gromacs/cmake-3.15.7-llvm-9-openmpi:master
+  needs:
+    - job: tng:clang-9:build
+

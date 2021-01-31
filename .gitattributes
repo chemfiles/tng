@@ -1,0 +1,8 @@
+# Generic rules
+*.c     filter=complete_formatting
+*.cpp   filter=complete_formatting
+*.h     filter=complete_formatting
+*.hpp   filter=complete_formatting
+ci-scripts/*.py    filter=copyright
+ci-scripts/*.sh    filter=copyright
+external/*         !filter
